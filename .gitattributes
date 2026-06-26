@@ -1,2 +1,13 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+
+# Binär-Assets: kein Text-Diff, keine Zeilenende-Normalisierung (schützt z. B. die .ai-Kunst)
+*.ai   binary
+*.psd  binary
+*.png  binary
+*.jpg  binary
+*.tga  binary
+*.fbx  binary
+*.wav  binary
+*.mp3  binary
+*.ogg  binary

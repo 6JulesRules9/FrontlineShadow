@@ -1,7 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="none" stroke="#E8EAED" stroke-width="9" stroke-linejoin="round" stroke-linecap="round">
-  <!-- Core — Hexagon-Reaktor (Defense / HP / Energie) -->
-  <polygon points="128,38 208,84 208,172 128,218 48,172 48,84"/>
-  <polygon points="128,86 168,109 168,147 128,170 88,147 88,109" stroke="#8A9099" stroke-width="7"/>
-  <!-- Akzent: Kern -->
-  <circle cx="128" cy="128" r="13" fill="#62D2E0" stroke="none"/>
-</svg>

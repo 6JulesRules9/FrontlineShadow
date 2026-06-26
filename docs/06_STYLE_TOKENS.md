@@ -59,20 +59,13 @@
 
 ---
 
-## 4. Aktueller Asset-Bestand (v0.1)
+## 4. Asset-Bestand & Quelle
 
-5 Komponenten-Icons als **Konsistenz-Test** des Token-Systems:
-
-| Slot | Datei | Motiv |
-|------|-------|-------|
-| Ketten | `components/tracks.svg` | Seitenansicht Laufwerk + Laufrollen, Akzent = Antriebsrad |
-| Core | `components/core.svg` | Hexagon-Reaktor, Akzent = Kern |
-| Turm | `components/turret.svg` | Turm + Rotations-Bogen (Akzent) |
-| Geschütz | `components/gun.svg` | Kanonenrohr mit Mündungsbremse, Akzent = Mündungsblitz |
-| Comms | `components/comms.svg` | Antenne + Signalbögen, Akzent = äußerster Bogen |
-
-**Vorschau:** `docs/style/icon-preview.html` (im Browser öffnen — zeigt alle 5
-auf dem dunklen Theme, hell/aktiv-Varianten nebeneinander).
+Die ersten handgemachten Platzhalter-SVGs wurden verworfen (Stilqualität nicht
+ausreichend). Das **echte Icon-Set** entsteht über **Claude Design** bzw. die
+Arbeitsdatei **`docs/Frontline Shadow.ai`** und folgt den obigen Tokens. Finale
+Icons landen unter `Assets/_Project/Art/Icons/...` (benannt nach den
+ScriptableObject-IDs).
 
 ---
 

@@ -14,9 +14,10 @@ Du **öffnest diesen Ordner** in Unity — dann generiert Unity alles Fehlende
 
 ## In 4 Schritten zum grünen Phase-0-Gate
 
-### 1. Unity 6 installieren
-Unity Hub installieren → darüber **Unity 6 LTS** (`6000.0.x`). Welche genaue
-6000.0-Version ist egal; Unity passt die Projektdatei beim Öffnen an.
+### 1. Unity installieren
+Unity Hub installieren → darüber **Unity `6000.4.0f1`** (deine Projekt-Version,
+steht in `ProjectSettings/ProjectVersion.txt`). Hast du eine leicht andere
+6000.x-Version? Auch ok — Unity passt die Projektdatei beim Öffnen an.
 
 ### 2. Diesen Ordner als Projekt öffnen
 Unity Hub ▸ **Add ▸ Add project from disk** ▸ **diesen Repo-Ordner** wählen ▸
