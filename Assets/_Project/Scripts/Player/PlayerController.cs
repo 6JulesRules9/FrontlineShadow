@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using FrontlineShadow.Combat;
 using FrontlineShadow.Core;
 using FrontlineShadow.Stats;
