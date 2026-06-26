@@ -1,0 +1,26 @@
+{
+    "name": "FrontlineShadow.Tests.EditMode",
+    "rootNamespace": "FrontlineShadow.Tests",
+    "references": [
+        "UnityEngine.TestRunner",
+        "UnityEditor.TestRunner",
+        "FrontlineShadow.Core",
+        "FrontlineShadow.Save",
+        "FrontlineShadow.Config"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "autoReferenced": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "nunit.framework.dll"
+    ],
+    "defineConstraints": [
+        "UNITY_INCLUDE_TESTS"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

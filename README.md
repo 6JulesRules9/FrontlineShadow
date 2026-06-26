@@ -30,8 +30,10 @@ Die Idee und der Bauplan leben in `docs/`. Reihenfolge zum Lesen:
 
 ## 🎯 Status
 
-Pre-Production. Repo enthält aktuell die vollständige **Vision + Plan**.
-Nächster Schritt: **Phase 0 — Projekt-Scaffolding** (siehe Roadmap).
+**Phase 0 — Fundament (Code steht).** Vision + Plan komplett; Unity-Code-Gerüst
+angelegt (Module/asmdefs, ServiceLocator, EventBus, Save-System, BalanceConfig,
+EditMode-Tests, CI). Einmaliger Editor-Schritt offen → siehe [`SETUP.md`](SETUP.md).
+Danach: **Phase 1 — Hunter-Komposition & Stats**.
 
 ## 🧭 Kurz-Pitch der Systeme
 - **Ein Hunter, unendlich Builds** — 5 Komponenten, freie Spezialisierung, echte
