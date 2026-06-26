@@ -9,10 +9,11 @@ using UnityEngine.InputSystem;
 namespace FrontlineShadow.Player
 {
     /// <summary>
-    /// Phase-2-Steuerung (04_ROADMAP.md Phase 2): Hull via WASD, Maus dreht die
-    /// Blickrichtung (WoT-Stil — Reticle bleibt zentriert, Turm/Kamera folgen
-    /// der Blickrichtung, begrenzt durch <see cref="StatType.TurretTraverse"/>),
-    /// Schuss per Linksklick — gegated durch <see cref="StatType.ReloadTime"/>.
+    /// Phase-2-Steuerung (04_ROADMAP.md Phase 2): Hull via WASD. Der Turm zielt
+    /// dorthin, wo die <see cref="HunterCameraFollow"/>-Kamera blickt (WoT-Stil —
+    /// die Maus dreht die Kamera, die Reticle bleibt zentriert), begrenzt durch
+    /// <see cref="StatType.TurretTraverse"/>. Schuss per Linksklick — gegated
+    /// durch <see cref="StatType.ReloadTime"/>.
     /// </summary>
     public class PlayerController : MonoBehaviour
     {
@@ -20,17 +21,12 @@ namespace FrontlineShadow.Player
         [SerializeField] Transform _muzzle;
         [SerializeField] Projectile _projectilePrefab;
         [SerializeField] float _projectileSpeed = 80f;
-        [SerializeField] float _mouseSensitivity = 0.2f;
 
         HunterMotor _motor;
         float _currentSpeed;
         float _turretYaw;
-        float _lookYaw;
         float _reloadCooldown;
         float _reloadTime = 1f;
-
-        /// <summary>Welt-Yaw, dem Turm und Kamera nachlaufen (von der Maus gesteuert).</summary>
-        public float LookYaw => _lookYaw;
 
         void Start()
         {
@@ -43,34 +39,15 @@ namespace FrontlineShadow.Player
             var stats = loadout.ComputeFinalStats();
             _motor = new HunterMotor(stats);
             _reloadTime = Mathf.Max(0.1f, stats.GetValueOrDefault(StatType.ReloadTime));
-            _lookYaw = transform.eulerAngles.y;
-
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
-        }
-
-        void OnDisable()
-        {
-            Cursor.lockState = CursorLockMode.None;
-            Cursor.visible = true;
         }
 
         void Update()
         {
             if (_motor == null) return;
 
-            UpdateLookYaw();
             DriveHull();
             AimTurret();
             HandleFiring();
-        }
-
-        void UpdateLookYaw()
-        {
-            var mouse = Mouse.current;
-            if (mouse == null) return;
-
-            _lookYaw += mouse.delta.x.ReadValue() * _mouseSensitivity;
         }
 
         void DriveHull()
@@ -95,7 +72,10 @@ namespace FrontlineShadow.Player
         {
             if (_turret == null) return;
 
-            var targetYaw = Mathf.DeltaAngle(transform.eulerAngles.y, _lookYaw);
+            var camera = Camera.main;
+            var lookYaw = camera != null ? camera.transform.eulerAngles.y : transform.eulerAngles.y;
+
+            var targetYaw = Mathf.DeltaAngle(transform.eulerAngles.y, lookYaw);
             _turretYaw = _motor.StepTurretYaw(_turretYaw, targetYaw, Time.deltaTime);
             _turret.localEulerAngles = new Vector3(0f, _turretYaw, 0f);
         }

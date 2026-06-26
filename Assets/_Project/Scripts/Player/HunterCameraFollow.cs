@@ -1,39 +1,59 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace FrontlineShadow.Player
 {
     /// <summary>
-    /// WoT-Stil-Folgekamera (04_ROADMAP.md Phase 2, 02_GAME_DESIGN.md §7
-    /// "Third-Person"): orbiert um den Hunter entlang der Blickrichtung
-    /// (<see cref="PlayerController.LookYaw"/>), nicht der Hull-Ausrichtung —
-    /// die Reticle (Bildschirmmitte) bleibt so mit der Zielrichtung deckungsgleich.
+    /// WoT-Stil-Orbit-Kamera (04_ROADMAP.md Phase 2, 02_GAME_DESIGN.md §7
+    /// "Third-Person"): die Maus dreht die Kamera um den Hunter (Yaw + Pitch),
+    /// der Cursor ist gesperrt, die Reticle bleibt zentriert. Der
+    /// <see cref="PlayerController"/> richtet den Turm dorthin, wo die Kamera
+    /// blickt — die Kamera ist also der Owner des Maus-Inputs.
     /// </summary>
     public class HunterCameraFollow : MonoBehaviour
     {
         [SerializeField] Transform _target;
-        [SerializeField] Vector3 _offset = new(0f, 6f, -8f);
-        [SerializeField] float _pitchDeg = 15f;
-        [SerializeField] float _followSpeed = 8f;
+        [SerializeField] float _distance = 9f;
+        [SerializeField] float _focusHeight = 1.5f;
+        [SerializeField] float _mouseSensitivity = 0.15f;
+        [SerializeField] float _minPitch = -5f;
+        [SerializeField] float _maxPitch = 55f;
 
-        PlayerController _playerController;
+        float _yaw;
+        float _pitch = 15f;
 
-        public void SetTarget(Transform target)
+        public void SetTarget(Transform target) => _target = target;
+
+        void Start()
         {
-            _target = target;
-            _playerController = target != null ? target.GetComponent<PlayerController>() : null;
+            if (_target != null) _yaw = _target.eulerAngles.y;
+
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+        }
+
+        void OnDisable()
+        {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
         }
 
         void LateUpdate()
         {
             if (_target == null) return;
 
-            var lookYaw = _playerController != null ? _playerController.LookYaw : _target.eulerAngles.y;
-            var yawRotation = Quaternion.Euler(0f, lookYaw, 0f);
-            var desiredPosition = _target.position + yawRotation * _offset;
-            var desiredRotation = Quaternion.Euler(_pitchDeg, lookYaw, 0f);
+            var mouse = Mouse.current;
+            if (mouse != null)
+            {
+                _yaw += mouse.delta.x.ReadValue() * _mouseSensitivity;
+                _pitch = Mathf.Clamp(_pitch - mouse.delta.y.ReadValue() * _mouseSensitivity, _minPitch, _maxPitch);
+            }
 
-            transform.position = Vector3.Lerp(transform.position, desiredPosition, _followSpeed * Time.deltaTime);
-            transform.rotation = Quaternion.Slerp(transform.rotation, desiredRotation, _followSpeed * Time.deltaTime);
+            var rotation = Quaternion.Euler(_pitch, _yaw, 0f);
+            var focus = _target.position + Vector3.up * _focusHeight;
+
+            transform.position = focus - rotation * Vector3.forward * _distance;
+            transform.rotation = rotation;
         }
     }
 }
