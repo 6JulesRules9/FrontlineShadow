@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f3c084aab3042f4f962cba8c78bb7e8, type: 3}
+  m_Name: BalanceConfig
+  m_EditorClassIdentifier: FrontlineShadow.Config::FrontlineShadow.Config.BalanceConfig
+  ComponentSlots: 5
+  PresetSlots: 3
+  DailyMaterialCap: 1000
+  FullRepairSeconds: 900
+  MaxRepairSeconds: 86400
