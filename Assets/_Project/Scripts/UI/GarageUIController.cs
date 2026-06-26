@@ -5,6 +5,7 @@ using FrontlineShadow.Core;
 using FrontlineShadow.Stats;
 using FrontlineShadow.Tank;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
 
 namespace FrontlineShadow.UI
@@ -25,6 +26,8 @@ namespace FrontlineShadow.UI
             { ComponentSlot.Gun, "Geschütz" },
             { ComponentSlot.Comms, "Comms" },
         };
+
+        [SerializeField] string _battleSceneName = "Battle";
 
         LoadoutService _loadout;
         readonly Dictionary<ComponentSlot, Label> _slotValueLabels = new();
@@ -60,6 +63,7 @@ namespace FrontlineShadow.UI
             leftColumn.style.marginRight = 16;
             leftColumn.Add(BuildSlotsPanel());
             leftColumn.Add(BuildPresetsPanel());
+            leftColumn.Add(BuildBattleButton());
             leftColumn.Add(BuildStatusBar());
 
             root.Add(leftColumn);
@@ -156,6 +160,15 @@ namespace FrontlineShadow.UI
             }
 
             return panel;
+        }
+
+        VisualElement BuildBattleButton()
+        {
+            var button = SmallButton("Zum Gefecht", () => SceneManager.LoadScene(_battleSceneName));
+            button.style.marginTop = 16;
+            button.style.marginLeft = 0;
+            button.style.alignSelf = Align.FlexStart;
+            return button;
         }
 
         VisualElement BuildStatusBar()

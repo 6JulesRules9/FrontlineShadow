@@ -10,6 +10,7 @@ namespace FrontlineShadow.Stats
         TopSpeed,
         Accel,
         HullTraverse,
+        TurretTraverse,
         Hp,
         ArmorFront,
         Weight,

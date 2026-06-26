@@ -8,7 +8,8 @@
         "FrontlineShadow.Save",
         "FrontlineShadow.Config",
         "FrontlineShadow.Stats",
-        "FrontlineShadow.Tank"
+        "FrontlineShadow.Tank",
+        "FrontlineShadow.Player"
     ],
     "includePlatforms": [
         "Editor"
