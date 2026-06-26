@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="none" stroke="#E8EAED" stroke-width="9" stroke-linejoin="round" stroke-linecap="round">
+  <!-- Turm / Turret — Aufsicht: Basis-Ring + Turmkörper + kurzes Rohr -->
+  <circle cx="128" cy="150" r="58"/>
+  <rect x="106" y="104" width="44" height="74" rx="18"/>
+  <rect x="118" y="58" width="20" height="56" rx="8"/>
+  <!-- Akzent: Rotations-Bogen mit Pfeil -->
+  <path d="M196 120 A74 74 0 0 0 78 84" stroke="#62D2E0" stroke-width="7"/>
+  <path d="M78 84 l-2 18 18 -6" stroke="#62D2E0" stroke-width="7"/>
+</svg>

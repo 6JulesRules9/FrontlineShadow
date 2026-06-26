@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="none" stroke="#E8EAED" stroke-width="9" stroke-linejoin="round" stroke-linecap="round">
+  <!-- Ketten / Tracks — Seitenansicht Laufwerk -->
+  <rect x="34" y="92" width="188" height="80" rx="40"/>
+  <rect x="60" y="116" width="136" height="32" rx="16" stroke="#8A9099" stroke-width="7"/>
+  <circle cx="84" cy="150" r="13"/>
+  <circle cx="122" cy="150" r="13"/>
+  <circle cx="160" cy="150" r="13"/>
+  <!-- Akzent: Antriebsrad -->
+  <circle cx="196" cy="118" r="12" stroke="#62D2E0"/>
+</svg>
