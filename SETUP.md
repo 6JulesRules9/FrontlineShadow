@@ -1,89 +1,74 @@
 # Setup — Frontline Shadow (Phase 0)
 
-Dieses Repo enthält das **Code-Fundament** (Phase 0). Der C#-Code, die Module
-(Assembly Definitions), Save-System, BalanceConfig, Tests, das Package-Manifest
-und die CI sind fertig. Was nur **im Unity-Editor** geht (`.meta`-Dateien,
-`Library/`, restliche `ProjectSettings/`, Szenen), machst du **einmalig** —
-hier die Schritte.
+## ⚠️ Das Wichtigste zuerst
+**Dieses Repo IST das Unity-Projekt.** Du legst **kein** separates Projekt an.
+Du **öffnest diesen Ordner** in Unity — dann generiert Unity alles Fehlende
+(`.meta`, `Library/`, restliche `ProjectSettings/`) selbst.
 
-> Hintergrund: Das Fundament wurde headless (ohne Editor) erstellt. Beim ersten
-> Öffnen generiert Unity die fehlenden Editor-Dateien automatisch.
+> Wenn du vorhin ein eigenes/leeres Unity-Projekt erstellt hast: das war ein
+> Umweg, du kannst es ignorieren/löschen. (Hattest du dort schon echte Arbeit
+> drin? Dann sag Bescheid — dann führen wir stattdessen *dein* Projekt mit
+> meinem Code zusammen.)
 
 ---
 
-## 1. Unity installieren
-- **Unity Hub** installieren, darüber **Unity 6 LTS** (`6000.0.x`).
-- Die Version in `ProjectSettings/ProjectVersion.txt` (`6000.0.32f1`) ggf. an
-  deine installierte 6000.0-Version anpassen — Unity bietet sonst beim Öffnen
-  einen Upgrade an (ist ok).
-- Beim Install **kein** zusätzliches Modul zwingend nötig (Build-Support später).
+## In 4 Schritten zum grünen Phase-0-Gate
 
-## 2. Projekt öffnen
-1. Unity Hub ▸ **Add ▸ Add project from disk** ▸ diesen Repo-Ordner wählen.
-2. Öffnen. Unity importiert, erzeugt `.meta`-Dateien + `Library/`, und löst die
-   Packages aus `Packages/manifest.json` auf (URP, Input System, Addressables,
-   Test Framework). Bei einer Versions-Nachfrage: **Resolve/Upgrade** bestätigen.
+### 1. Unity 6 installieren
+Unity Hub installieren → darüber **Unity 6 LTS** (`6000.0.x`). Welche genaue
+6000.0-Version ist egal; Unity passt die Projektdatei beim Öffnen an.
 
-## 3. URP aktivieren
-Falls noch keine Render-Pipeline gesetzt ist:
-1. `Assets ▸ Create ▸ Rendering ▸ URP Asset (with Universal Renderer)`.
-2. `Project Settings ▸ Graphics` ▸ das URP-Asset als **Default Render Pipeline**
-   setzen (und unter `Quality` ebenfalls zuweisen).
+### 2. Diesen Ordner als Projekt öffnen
+Unity Hub ▸ **Add ▸ Add project from disk** ▸ **diesen Repo-Ordner** wählen ▸
+öffnen. Unity importiert, lädt die Packages (URP, Input System, Addressables,
+Test Framework) und erzeugt die fehlenden Dateien. Bei Nachfragen
+(Versions-Upgrade / Package-Resolve): **bestätigen**.
 
-## 4. BalanceConfig-Asset anlegen
-- `Assets ▸ Create ▸ Frontline Shadow ▸ Balance Config`
-- Ablage z. B. unter `Assets/_Project/Data/Balance/BalanceConfig.asset`.
+### 3. Ein Menüklick erledigt den Rest
+Oben im Menü: **Tools ▸ Frontline Shadow ▸ Setup Phase 0**
 
-## 5. Szenen anlegen (Bootstrap + Garage)
-1. Zwei leere Szenen unter `Assets/_Project/Scenes/` speichern:
-   `Bootstrap.unity` und `Garage.unity`.
-2. In **Bootstrap**: leeres GameObject „Bootstrap" anlegen ▸ Komponente
-   **GameBootstrap** anhängen ▸ das **BalanceConfig**-Asset zuweisen.
-3. `File ▸ Build Settings`: **beide** Szenen hinzufügen —
-   `Bootstrap` an **Index 0**, `Garage` an **Index 1**.
-4. Play auf der Bootstrap-Szene → Console zeigt
-   `"[Bootstrap] Services bereit. ..."` und lädt die (leere) Garage.
+Das legt automatisch an und verdrahtet:
+- `BalanceConfig`-Asset
+- Szenen **Bootstrap** + **Garage**
+- `GameBootstrap` (mit zugewiesener BalanceConfig)
+- Build-Settings-Reihenfolge (Bootstrap = 0, Garage = 1)
 
-## 6. Tests laufen lassen
-- `Window ▸ General ▸ Test Runner ▸ EditMode ▸ Run All`
-- Erwartung: **10 grüne Tests** (ServiceLocator, EventBus, SaveService).
+### 4. Prüfen
+- `Assets/_Project/Scenes/Bootstrap.unity` öffnen ▸ **Play** ▸ in der Console
+  erscheint `"[Bootstrap] Services bereit. ..."` und die (leere) Garage lädt.
+- **Window ▸ General ▸ Test Runner ▸ EditMode ▸ Run All** → **10 grüne Tests**.
 
-## 7. Erstes Commit nach dem Öffnen
-Unity hat jetzt viele `.meta`- und `ProjectSettings/`-Dateien erzeugt. Diese
-**committen** (sie gehören ins Repo). `Library/`, `Temp/`, `*.csproj`, `*.sln`
-sind bereits über `.gitignore` ausgeschlossen.
+✅ **Gate erfüllt**, wenn: öffnet ohne Compile-Fehler · Bootstrap lädt Garage ·
+Tests grün.
+
+---
+
+## Danach committen
+Unity hat jetzt viele `.meta`- und `ProjectSettings/`-Dateien erzeugt — die
+gehören ins Repo:
 
 ```bash
 git add -A
-git commit -m "chore: Unity-generierte Projektdateien (meta, ProjectSettings, Szenen)"
+git commit -m "chore: Unity-generierte Projektdateien + Phase-0-Szenen"
 git push
 ```
 
----
-
-## 8. CI grün bekommen (GitHub Actions)
-Die CI (`.github/workflows/ci.yml`) nutzt **game-ci** und braucht eine
-Unity-Lizenz als Secrets. Einmalig einrichten:
-
-1. **Aktivierungsdatei erzeugen** nach der game-ci-Anleitung
-   (<https://game.ci/docs/github/activation>): erzeugt eine `.alf`, die du auf
-   der Unity-Lizenzseite gegen eine `.ulf` eintauschst.
-2. In GitHub ▸ **Settings ▸ Secrets and variables ▸ Actions** anlegen:
-   - `UNITY_LICENSE` = kompletter Inhalt der `.ulf` (Personal-Lizenz), **oder**
-   - `UNITY_EMAIL` + `UNITY_PASSWORD` (Plus/Pro).
-3. `unityVersion` im Workflow muss zur Projekt-Version passen
-   (`6000.0.32f1` — bei Anpassung in Schritt 1 hier mitziehen).
-
-Danach läuft die CI bei jedem Push auf `claude/**` und `main` und führt die
-EditMode-Tests aus.
+`Library/`, `Temp/`, `*.csproj`, `*.sln` sind über `.gitignore` bereits
+ausgeschlossen — die kommen nicht mit rein (ist korrekt so).
 
 ---
 
-## Phase-0-Gate ✅ (erfüllt, wenn …)
-- [ ] Projekt öffnet in Unity 6 ohne Compile-Fehler.
-- [ ] `Bootstrap` lädt die (leere) `Garage`-Szene.
-- [ ] EditMode-Tests laufen **grün** (lokal und in CI).
+## Wenn etwas hakt
+Bei **Compile-/Import-Fehlern** beim Öffnen: **Console-Meldung kopieren und mir
+schicken** — ich fixe es. (Ich habe kein Unity hier und konnte daher nicht
+selbst kompilieren; deshalb ist deine erste Rückmeldung wichtig.)
 
-Wenn beim Öffnen ein Compile-/Import-Fehler auftaucht: **schick mir die
-Console-Meldung**, dann fixe ich's. Danach geht's an **Phase 1** (Hunter-
-Komposition & Stats — das erste, was du in der Garage anfassen kannst).
+---
+
+## Optional / später (nicht nötig fürs Phase-0-Gate)
+- **URP-Look:** Erst relevant, wenn echte Visuals kommen (Phase 2+). Dann legen
+  wir ein URP-Asset an und weisen es zu. Für Phase 0 (nur Services + leere
+  Szenen + Tests) ist es egal.
+- **CI grün (GitHub Actions):** braucht eine Unity-Lizenz als Secret
+  (`UNITY_LICENSE`) — Anleitung: <https://game.ci/docs/github/activation>.
+  Die `unityVersion` im Workflow ggf. an deine Version anpassen.

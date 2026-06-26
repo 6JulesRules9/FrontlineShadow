@@ -1,0 +1,20 @@
+{
+    "name": "FrontlineShadow.Editor",
+    "rootNamespace": "FrontlineShadow.EditorTools",
+    "references": [
+        "FrontlineShadow.Core",
+        "FrontlineShadow.Config",
+        "FrontlineShadow.Bootstrap"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "autoReferenced": true,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
