@@ -30,7 +30,7 @@ namespace FrontlineShadow.UI
         readonly Dictionary<ComponentSlot, Label> _slotValueLabels = new();
         readonly Dictionary<StatType, Label> _statValueLabels = new();
         readonly List<Label> _presetNameLabels = new();
-        VisualElement _statusBar;
+        Label _statusBar;
 
         void OnEnable()
         {
