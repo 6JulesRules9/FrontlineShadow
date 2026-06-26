@@ -29,6 +29,13 @@ namespace FrontlineShadow.Config
         [Tooltip("Deckel der Reparaturzeit in Sekunden (z. B. 24 h = 86400).")]
         public float MaxRepairSeconds = 86400f;
 
+        [Header("Stats — Weight/Speed-Koppelung")]
+        [Tooltip("Gesamtgewicht, ab dem Top-Speed gedrosselt wird (kein Malus darunter).")]
+        public float ReferenceWeight = 1000f;
+
+        [Tooltip("Top-Speed-Reduktion (Fraktion) pro Gewichtseinheit über ReferenceWeight.")]
+        public float WeightSpeedCoupling = 0.0005f;
+
         void OnValidate()
         {
             ComponentSlots = Mathf.Max(1, ComponentSlots);
@@ -36,6 +43,8 @@ namespace FrontlineShadow.Config
             DailyMaterialCap = Mathf.Max(0, DailyMaterialCap);
             FullRepairSeconds = Mathf.Max(0f, FullRepairSeconds);
             MaxRepairSeconds = Mathf.Max(FullRepairSeconds, MaxRepairSeconds);
+            ReferenceWeight = Mathf.Max(0f, ReferenceWeight);
+            WeightSpeedCoupling = Mathf.Max(0f, WeightSpeedCoupling);
         }
     }
 }

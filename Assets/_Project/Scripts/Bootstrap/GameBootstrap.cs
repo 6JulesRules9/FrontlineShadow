@@ -1,6 +1,7 @@
 using FrontlineShadow.Config;
 using FrontlineShadow.Core;
 using FrontlineShadow.Save;
+using FrontlineShadow.Tank;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -17,6 +18,7 @@ namespace FrontlineShadow.Bootstrap
     public class GameBootstrap : MonoBehaviour
     {
         [SerializeField] BalanceConfig _balanceConfig;
+        [SerializeField] ComponentCatalog _componentCatalog;
         [SerializeField] string _firstScene = "Garage";
         [SerializeField] bool _loadFirstScene = true;
 
@@ -50,6 +52,19 @@ namespace FrontlineShadow.Bootstrap
             ServiceLocator.Register(save);
 
             var cfg = _balanceConfig != null ? _balanceConfig.name : "—(nicht zugewiesen)";
+
+            if (_balanceConfig != null && _componentCatalog != null)
+            {
+                var loadout = new LoadoutService(_componentCatalog, _balanceConfig);
+                loadout.LoadOrCreate();
+                ServiceLocator.Register(loadout);
+            }
+            else
+            {
+                Debug.LogWarning("[Bootstrap] LoadoutService nicht verdrahtet " +
+                                  "(BalanceConfig oder ComponentCatalog fehlt).");
+            }
+
             Debug.Log($"[Bootstrap] Services bereit. BalanceConfig: {cfg}. " +
                       $"Save v{save.Data.Version}, zuletzt {save.Data.LastSavedUtc}.");
         }

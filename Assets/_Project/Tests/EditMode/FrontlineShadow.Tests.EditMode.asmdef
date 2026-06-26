@@ -6,7 +6,9 @@
         "UnityEditor.TestRunner",
         "FrontlineShadow.Core",
         "FrontlineShadow.Save",
-        "FrontlineShadow.Config"
+        "FrontlineShadow.Config",
+        "FrontlineShadow.Stats",
+        "FrontlineShadow.Tank"
     ],
     "includePlatforms": [
         "Editor"

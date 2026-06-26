@@ -1,18 +1,13 @@
 {
-    "name": "FrontlineShadow.Editor",
-    "rootNamespace": "FrontlineShadow.EditorTools",
+    "name": "FrontlineShadow.UI",
+    "rootNamespace": "FrontlineShadow.UI",
     "references": [
         "FrontlineShadow.Core",
         "FrontlineShadow.Config",
-        "FrontlineShadow.Bootstrap",
         "FrontlineShadow.Stats",
-        "FrontlineShadow.Tank",
-        "FrontlineShadow.UI",
-        "Unity.InputSystem"
+        "FrontlineShadow.Tank"
     ],
-    "includePlatforms": [
-        "Editor"
-    ],
+    "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "autoReferenced": true,

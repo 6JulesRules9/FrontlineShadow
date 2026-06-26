@@ -1,12 +1,7 @@
 {
-    "name": "FrontlineShadow.Bootstrap",
-    "rootNamespace": "FrontlineShadow.Bootstrap",
-    "references": [
-        "FrontlineShadow.Core",
-        "FrontlineShadow.Save",
-        "FrontlineShadow.Config",
-        "FrontlineShadow.Tank"
-    ],
+    "name": "FrontlineShadow.Stats",
+    "rootNamespace": "FrontlineShadow.Stats",
+    "references": [],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
