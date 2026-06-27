@@ -36,6 +36,7 @@ namespace FrontlineShadow.EditorTools
             EnsureFolder(ComponentsDir);
 
             var components = EnsureComponents();
+            MigrateStats(components);
             var catalog = EnsureCatalog(components);
             EnsureGarageUi(catalog);
             WireBootstrapCatalog(catalog);
@@ -81,10 +82,12 @@ namespace FrontlineShadow.EditorTools
                 EnsureComponent("turret.light", ComponentSlot.Turret, "turret.light",
                     Mod(StatType.ArmorFront, ModOp.Flat, 40),
                     Mod(StatType.Hp, ModOp.Flat, 150),
+                    Mod(StatType.TurretTraverse, ModOp.Flat, 42),
                     Mod(StatType.Weight, ModOp.Flat, 100)),
                 EnsureComponent("turret.heavy", ComponentSlot.Turret, "turret.heavy",
                     Mod(StatType.ArmorFront, ModOp.Flat, 90),
                     Mod(StatType.Hp, ModOp.Flat, 220),
+                    Mod(StatType.TurretTraverse, ModOp.Flat, 26),
                     Mod(StatType.Weight, ModOp.Flat, 260)),
 
                 EnsureComponent("gun.standard", ComponentSlot.Gun, "gun.standard",
@@ -118,6 +121,29 @@ namespace FrontlineShadow.EditorTools
         }
 
         static StatModifier Mod(StatType type, ModOp op, float value) => new(type, op, value);
+
+        /// <summary>
+        /// Ergänzt Stats auf bereits existierenden Assets (die EnsureComponent
+        /// nicht überschreibt). Aktuell: TurretTraverse für die Türme nachrüsten,
+        /// falls sie vor der Einführung des Stats erstellt wurden.
+        /// </summary>
+        static void MigrateStats(List<TankComponentDef> components)
+        {
+            EnsureStat(Find(components, "turret.light"), StatType.TurretTraverse, ModOp.Flat, 42);
+            EnsureStat(Find(components, "turret.heavy"), StatType.TurretTraverse, ModOp.Flat, 26);
+        }
+
+        static TankComponentDef Find(List<TankComponentDef> components, string id)
+            => components.Find(c => c != null && c.Id == id);
+
+        static void EnsureStat(TankComponentDef def, StatType type, ModOp op, float value)
+        {
+            if (def == null) return;
+            if (def.Stats.Exists(m => m.Type == type)) return;
+
+            def.Stats.Add(new StatModifier(type, op, value));
+            EditorUtility.SetDirty(def);
+        }
 
         static TankComponentDef EnsureComponent(string id, ComponentSlot slot, string pathId, params StatModifier[] stats)
         {
