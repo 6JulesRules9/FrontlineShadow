@@ -43,6 +43,14 @@ namespace FrontlineShadow.Player
             _shotDamage = new DamageInfo(
                 stats.GetValueOrDefault(StatType.AlphaDamage),
                 stats.GetValueOrDefault(StatType.Penetration));
+
+            var turretRate = stats.GetValueOrDefault(StatType.TurretTraverse);
+            Debug.Log($"[Player] Stats geladen — TopSpeed {stats.GetValueOrDefault(StatType.TopSpeed):0}, " +
+                      $"TurretTraverse {turretRate:0}°/s, Alpha {_shotDamage.AlphaDamage:0}, " +
+                      $"Pen {_shotDamage.Penetration:0}, Reload {_reloadTime:0.0}s.");
+            if (turretRate <= 0f)
+                Debug.LogWarning("[Player] TurretTraverse = 0 → Turm dreht nicht. Bitte " +
+                                 "'Tools ▸ Frontline Shadow ▸ Setup Phase 1' erneut ausführen (rüstet den Stat nach).");
         }
 
         void Update()
