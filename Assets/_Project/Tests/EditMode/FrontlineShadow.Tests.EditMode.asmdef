@@ -9,7 +9,8 @@
         "FrontlineShadow.Config",
         "FrontlineShadow.Stats",
         "FrontlineShadow.Tank",
-        "FrontlineShadow.Player"
+        "FrontlineShadow.Player",
+        "FrontlineShadow.Combat"
     ],
     "includePlatforms": [
         "Editor"

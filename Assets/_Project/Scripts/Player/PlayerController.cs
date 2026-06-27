@@ -27,6 +27,7 @@ namespace FrontlineShadow.Player
         float _turretYaw;
         float _reloadCooldown;
         float _reloadTime = 1f;
+        DamageInfo _shotDamage;
 
         void Start()
         {
@@ -39,6 +40,9 @@ namespace FrontlineShadow.Player
             var stats = loadout.ComputeFinalStats();
             _motor = new HunterMotor(stats);
             _reloadTime = Mathf.Max(0.1f, stats.GetValueOrDefault(StatType.ReloadTime));
+            _shotDamage = new DamageInfo(
+                stats.GetValueOrDefault(StatType.AlphaDamage),
+                stats.GetValueOrDefault(StatType.Penetration));
         }
 
         void Update()
@@ -90,7 +94,7 @@ namespace FrontlineShadow.Player
             if (_projectilePrefab == null || _muzzle == null) return;
 
             var projectile = Instantiate(_projectilePrefab, _muzzle.position, _muzzle.rotation);
-            projectile.Launch(_projectileSpeed);
+            projectile.Launch(_projectileSpeed, _shotDamage);
             _reloadCooldown = _reloadTime;
         }
     }
