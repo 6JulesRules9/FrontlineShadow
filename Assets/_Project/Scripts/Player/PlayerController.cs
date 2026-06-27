@@ -90,12 +90,24 @@ namespace FrontlineShadow.Player
 
             var mouse = Mouse.current;
             if (mouse == null || !mouse.leftButton.wasPressedThisFrame) return;
-            if (_reloadCooldown > 0f) return;
-            if (_projectilePrefab == null || _muzzle == null) return;
+
+            if (_reloadCooldown > 0f)
+            {
+                Debug.Log($"[Player] Lädt nach … noch {_reloadCooldown:0.0}s (ReloadTime {_reloadTime:0.0}s).");
+                return;
+            }
+
+            if (_projectilePrefab == null || _muzzle == null)
+            {
+                Debug.LogWarning("[Player] Schuss blockiert: Projektil-Prefab oder Muzzle nicht zugewiesen. " +
+                                 "HunterRig-Prefab via 'Setup Phase 2' neu erzeugen (ggf. altes Prefab löschen).");
+                return;
+            }
 
             var projectile = Instantiate(_projectilePrefab, _muzzle.position, _muzzle.rotation);
             projectile.Launch(_projectileSpeed, _shotDamage);
             _reloadCooldown = _reloadTime;
+            Debug.Log($"[Player] Schuss! Alpha {_shotDamage.AlphaDamage:0}, Pen {_shotDamage.Penetration:0}.");
         }
     }
 }

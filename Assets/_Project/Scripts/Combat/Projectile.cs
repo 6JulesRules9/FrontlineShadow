@@ -18,6 +18,26 @@ namespace FrontlineShadow.Combat
         float _age;
         DamageInfo _damage;
 
+        void Awake()
+        {
+            EnsureTracer();
+        }
+
+        /// <summary>Gibt dem Projektil eine sichtbare Leuchtspur — auch wenn das Prefab keine hat.</summary>
+        void EnsureTracer()
+        {
+            var trail = GetComponent<TrailRenderer>();
+            if (trail == null) trail = gameObject.AddComponent<TrailRenderer>();
+
+            trail.time = 0.35f;
+            trail.startWidth = 0.25f;
+            trail.endWidth = 0.02f;
+            trail.numCapVertices = 4;
+            trail.material = new Material(Shader.Find("Sprites/Default"));
+            trail.startColor = new Color(1f, 0.85f, 0.3f, 1f);
+            trail.endColor = new Color(1f, 0.45f, 0f, 0f);
+        }
+
         public void Launch(float speed)
         {
             _speed = speed;
