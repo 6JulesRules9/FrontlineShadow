@@ -1,0 +1,1156 @@
+<title>Leuchtfeuer — Prototyp</title>
+<style>
+  :root{
+    --deep:#0B1522; --sea:#12283A; --sea-day:#1B3A54;
+    --panel:#101B29; --panel2:#16243A; --line:#243650;
+    --ink:#E9E4D6; --ink-dim:#8A93A0; --ink-faint:#5A6674;
+    --beam:#FFC96B; --brass:#C9A227; --danger:#E06552; --safe:#7FC8A9;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{height:100%}
+  body{
+    background:var(--deep); color:var(--ink);
+    font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+    overflow:hidden; touch-action:manipulation; user-select:none;-webkit-user-select:none;
+  }
+  .serif{font-family:'Iowan Old Style','Palatino Linotype',Palatino,Georgia,serif}
+  .mono{font-family:ui-monospace,'SF Mono',Consolas,monospace}
+  #app{display:flex;height:100dvh;width:100vw}
+  /* ── linke Seite: Welt ── */
+  #world{flex:1;display:flex;flex-direction:column;min-width:0}
+  #topbar{
+    display:flex;align-items:center;gap:18px;padding:8px 16px;
+    background:var(--panel);border-bottom:1px solid var(--line);
+    font-variant-numeric:tabular-nums;flex-wrap:wrap
+  }
+  .gauge{display:flex;align-items:baseline;gap:6px;white-space:nowrap}
+  .gauge .lbl{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-dim)}
+  .gauge .val{font-size:17px;font-weight:600}
+  .gauge .sub{font-size:12px;color:var(--ink-faint)}
+  .gauge .sub.warn{color:var(--danger)}
+  #topbar .spacer{flex:1}
+  .iconbtn{
+    background:var(--panel2);border:1px solid var(--line);color:var(--ink);
+    border-radius:6px;padding:6px 12px;font-size:14px;cursor:pointer
+  }
+  .iconbtn:active{background:var(--line)}
+  #canvasWrap{flex:1;position:relative;display:flex;align-items:center;justify-content:center;background:var(--deep);min-height:0}
+  canvas{display:block;max-width:100%;max-height:100%}
+  /* Nacht-Ticker */
+  #ticker{
+    position:absolute;left:12px;bottom:12px;max-width:52%;
+    display:flex;flex-direction:column;gap:3px;pointer-events:none
+  }
+  #ticker div{
+    font-size:12.5px;color:var(--ink-dim);
+    background:rgba(8,14,24,.72);padding:3px 9px;border-radius:4px;
+    border-left:2px solid var(--line)
+  }
+  #ticker div.hot{color:var(--ink);border-left-color:var(--danger)}
+  #ticker div.good{border-left-color:var(--safe)}
+  #ticker .t{color:var(--brass);margin-right:6px}
+  /* Nacht-HUD */
+  #nightHud{position:absolute;top:10px;left:50%;transform:translateX(-50%);
+    display:none;align-items:center;gap:14px;background:rgba(8,14,24,.8);
+    border:1px solid var(--line);border-radius:8px;padding:6px 16px}
+  #nightHud .clock{font-size:20px;font-weight:600;font-variant-numeric:tabular-nums}
+  #nightHud .oil{font-size:13px;color:var(--ink-dim);font-variant-numeric:tabular-nums}
+  #nightHud button{margin-left:4px}
+  #nightHud button.on{border-color:var(--beam);color:var(--beam)}
+  /* ── rechte Seite: Pult ── */
+  #pult{
+    width:340px;flex:none;background:var(--panel);border-left:1px solid var(--line);
+    display:flex;flex-direction:column;overflow:hidden
+  }
+  #pultScroll{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:12px}
+  .card{background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:12px}
+  .card h3{
+    font-size:11px;letter-spacing:.12em;text-transform:uppercase;
+    color:var(--ink-dim);margin-bottom:9px;font-weight:600
+  }
+  #dayline{display:flex;justify-content:space-between;align-items:baseline;padding:2px 2px 0}
+  #dayline .day{font-size:21px}
+  #dayline .ruf{font-size:14px;color:var(--brass)}
+  #forecastText{font-size:14px;line-height:1.5;color:var(--ink)}
+  #forecastText .dim{color:var(--ink-dim);font-size:13px}
+  #forecastText .warn{color:var(--danger)}
+  .frow{display:flex;align-items:center;gap:8px;margin-top:6px;font-size:13.5px}
+  .frow .ic{width:20px;text-align:center}
+  /* Leuchtfeuer-Steuerung */
+  .modes{display:flex;gap:6px;margin-bottom:9px}
+  .modes button{
+    flex:1;padding:8px 4px;border-radius:6px;border:1px solid var(--line);
+    background:transparent;color:var(--ink-dim);font-size:13px;cursor:pointer
+  }
+  .modes button.on{border-color:var(--beam);color:var(--beam);background:rgba(255,201,107,.08)}
+  #compass{display:none;grid-template-columns:repeat(4,1fr);gap:5px;margin-bottom:9px}
+  #compass button{
+    padding:7px 2px;border-radius:5px;border:1px solid var(--line);
+    background:transparent;color:var(--ink-dim);font-size:12px;cursor:pointer
+  }
+  #compass button.on{border-color:var(--beam);color:var(--beam)}
+  .upg{display:flex;align-items:center;gap:8px;padding:7px 0;border-top:1px solid var(--line)}
+  .upg:first-of-type{border-top:none}
+  .upg .nm{flex:1;font-size:13.5px}
+  .upg .nm small{display:block;color:var(--ink-faint);font-size:11px;margin-top:1px}
+  .pips{display:flex;gap:3px}
+  .pips i{width:7px;height:7px;border-radius:50%;background:var(--line)}
+  .pips i.on{background:var(--brass)}
+  .buy{
+    border:1px solid var(--brass);color:var(--brass);background:transparent;
+    border-radius:5px;padding:5px 9px;font-size:12px;cursor:pointer;white-space:nowrap;
+    font-variant-numeric:tabular-nums
+  }
+  .buy:disabled{border-color:var(--line);color:var(--ink-faint)}
+  .buy.max{border:none;color:var(--ink-faint);font-size:11px}
+  #oilProg{margin-top:9px;font-size:13px;color:var(--ink-dim);font-variant-numeric:tabular-nums}
+  #oilProg.warn{color:var(--danger)}
+  /* Bauen */
+  #buildGrid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+  .bbtn{
+    display:flex;flex-direction:column;align-items:flex-start;gap:2px;
+    border:1px solid var(--line);border-radius:7px;background:transparent;
+    color:var(--ink);padding:9px 10px;cursor:pointer;text-align:left
+  }
+  .bbtn.on{border-color:var(--beam);background:rgba(255,201,107,.08)}
+  .bbtn:disabled{opacity:.45}
+  .bbtn .n{font-size:13px;font-weight:600}
+  .bbtn .c{font-size:11.5px;color:var(--brass);font-variant-numeric:tabular-nums}
+  .bbtn .d{font-size:11px;color:var(--ink-faint);line-height:1.35}
+  #buildHint{font-size:12px;color:var(--beam);margin-top:8px;display:none}
+  /* Struktur-Info */
+  #structInfo{display:none}
+  #structInfo .nm{font-size:15px;margin-bottom:3px}
+  #structInfo .st{font-size:12.5px;color:var(--ink-dim);margin-bottom:9px}
+  #structInfo .st.bad{color:var(--danger)}
+  #structInfo .actions{display:flex;gap:7px}
+  /* Nacht-Knopf */
+  #nightBtnWrap{padding:12px 14px;border-top:1px solid var(--line);background:var(--panel)}
+  #nightBtn{
+    width:100%;padding:14px;border-radius:8px;border:none;cursor:pointer;
+    background:linear-gradient(180deg,#FFD98A,#E8A845);color:#20160a;
+    font-size:16px;font-weight:700;letter-spacing:.02em
+  }
+  #nightBtn:active{filter:brightness(.92)}
+  #nightBtn:disabled{background:var(--panel2);color:var(--ink-faint);cursor:default}
+  /* Modals */
+  .modal{
+    position:fixed;inset:0;background:rgba(4,8,15,.82);display:none;
+    align-items:center;justify-content:center;z-index:40;padding:18px
+  }
+  .modal.show{display:flex}
+  .mcard{
+    background:var(--panel2);border:1px solid var(--line);border-radius:10px;
+    max-width:560px;width:100%;max-height:88dvh;overflow-y:auto;padding:26px 30px
+  }
+  .mcard h2{font-size:24px;margin-bottom:4px;text-wrap:balance}
+  .mcard .sub{color:var(--ink-dim);font-size:13.5px;margin-bottom:16px}
+  .log{border-top:1px solid var(--line);padding:10px 0;font-size:14.5px;line-height:1.55}
+  .log h4{
+    font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--ink-dim);margin-bottom:5px;font-weight:600
+  }
+  .log .good{color:var(--safe)} .log .bad{color:var(--danger)} .log .oil{color:var(--brass)}
+  .mbtn{
+    display:block;width:100%;margin-top:18px;padding:13px;border-radius:8px;border:none;
+    background:linear-gradient(180deg,#FFD98A,#E8A845);color:#20160a;
+    font-size:15px;font-weight:700;cursor:pointer
+  }
+  .mbtn.ghost{background:transparent;border:1px solid var(--line);color:var(--ink-dim);margin-top:9px}
+  /* Titel */
+  #title{position:fixed;inset:0;z-index:50;display:flex;align-items:center;justify-content:center;
+    flex-direction:column;gap:10px;pointer-events:none;
+    background:radial-gradient(ellipse at center,rgba(6,12,22,.25) 30%,rgba(6,12,22,.88) 100%)}
+  #title.gone{display:none}
+  body.titling #pult,body.titling #topbar{visibility:hidden}
+  #title h1{
+    font-size:clamp(42px,7vw,76px);letter-spacing:.22em;font-weight:400;
+    text-shadow:0 2px 30px rgba(255,201,107,.35);pointer-events:none
+  }
+  #title p{color:var(--ink-dim);font-size:15px;margin-bottom:22px}
+  #title button{pointer-events:auto}
+  /* Toasts */
+  #toasts{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);z-index:45;
+    display:flex;flex-direction:column;gap:8px;align-items:center;width:min(520px,92vw)}
+  .toast{
+    background:var(--panel2);border:1px solid var(--brass);border-radius:8px;
+    padding:11px 16px;font-size:14px;line-height:1.45;cursor:pointer;width:100%;
+    box-shadow:0 6px 24px rgba(0,0,0,.5)
+  }
+  .toast small{display:block;color:var(--ink-faint);margin-top:3px;font-size:11px}
+  /* Portrait-Sperre */
+  #rotate{position:fixed;inset:0;z-index:100;background:var(--deep);display:none;
+    align-items:center;justify-content:center;flex-direction:column;gap:14px;text-align:center;padding:30px}
+  #rotate .ic{font-size:52px}
+  @media (orientation:portrait){ #rotate{display:flex} }
+  @media (prefers-reduced-motion:reduce){ *{animation:none!important;transition:none!important} }
+  button:focus-visible{outline:2px solid var(--beam);outline-offset:2px}
+  #smoke{position:fixed;inset:auto 0 0 0;background:#000;color:#0f0;font:11px monospace;
+    max-height:40dvh;overflow:auto;z-index:200;display:none;padding:8px}
+</style>
+
+<div id="app">
+  <div id="world">
+    <div id="topbar">
+      <div class="gauge"><span class="lbl">Öl</span><span class="val" id="gOil">0</span><span class="sub" id="gOilSub"></span></div>
+      <div class="gauge"><span class="lbl">Treibgut</span><span class="val" id="gWood">0</span></div>
+      <div class="gauge"><span class="lbl">Gerettet</span><span class="val" id="gSaved" style="color:var(--safe)">0</span></div>
+      <div class="spacer"></div>
+      <button class="iconbtn" id="helpBtn" title="Hilfe">?</button>
+      <button class="iconbtn" id="muteBtn" title="Ton">🔊</button>
+    </div>
+    <div id="canvasWrap">
+      <canvas id="cv" width="1360" height="840"></canvas>
+      <div id="ticker"></div>
+      <div id="nightHud">
+        <span class="clock" id="clock">20:00</span>
+        <span class="oil" id="oilHud"></span>
+        <button class="iconbtn on" data-sp="1">1×</button>
+        <button class="iconbtn" data-sp="2">2×</button>
+        <button class="iconbtn" data-sp="4">4×</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="pult">
+    <div id="pultScroll">
+      <div id="dayline">
+        <span class="day serif">Tag <b id="dayNum">1</b></span>
+        <span class="ruf" id="rufLbl">Ruf 10</span>
+      </div>
+
+      <div class="card">
+        <h3>Vorhersage für heute Nacht</h3>
+        <div id="forecastText"></div>
+      </div>
+
+      <div class="card">
+        <h3>Das Leuchtfeuer</h3>
+        <div class="modes">
+          <button id="modeRot" class="on">↻ Rotieren</button>
+          <button id="modeFok">◉ Fokus</button>
+        </div>
+        <div id="compass"></div>
+        <div id="upgrades"></div>
+        <div id="oilProg"></div>
+      </div>
+
+      <div class="card">
+        <h3>Bauen</h3>
+        <div id="buildGrid"></div>
+        <div id="buildHint"></div>
+      </div>
+
+      <div class="card" id="structInfo">
+        <h3>Ausgewählt</h3>
+        <div class="nm" id="siName"></div>
+        <div class="st" id="siState"></div>
+        <div class="actions" id="siActions"></div>
+      </div>
+    </div>
+    <div id="nightBtnWrap">
+      <button id="nightBtn">🌙 &nbsp;Nacht anbrechen lassen</button>
+    </div>
+  </div>
+</div>
+
+<div id="title">
+  <h1 class="serif">LEUCHTFEUER</h1>
+  <p>Halte das Licht am Brennen. Bring sie sicher vorbei.</p>
+  <button class="mbtn" id="startBtn" style="width:auto;padding:13px 44px">Dienst antreten</button>
+  <button class="mbtn ghost" id="contBtn" style="width:auto;padding:10px 30px;display:none">Weiter</button>
+</div>
+
+<div class="modal" id="reportModal"><div class="mcard serif" id="reportCard"></div></div>
+<div class="modal" id="helpModal"><div class="mcard">
+  <h2 class="serif">Das Handwerk des Wärters</h2>
+  <div class="sub">Kurzregeln des Prototyps</div>
+  <div class="log">
+    <b>Tag:</b> Vorhersage lesen, bauen, reparieren, Wracks bergen. Wenn du bereit bist, brich die Nacht an.<br><br>
+    <b>Nacht:</b> Schiffe passieren die Insel. In Riffnähe brauchen sie <b style="color:var(--beam)">Orientierung</b>:
+    dein Lichtstrahl, eine Leuchtboje am Riff oder (bei Nebel) das Nebelhorn. Ohne Orientierung laufen sie auf.<br><br>
+    <b>Öl:</b> Das Feuer verbrennt jede Nacht Öl. Geht es aus, wird es dunkel — für alle.<br><br>
+    <b>Sturm:</b> Wind treibt Schiffe Richtung Küste und beschädigt, was am Ufer steht. Wellenbrecher fangen die See ab.<br><br>
+    <b>Morgen:</b> Das Logbuch erzählt dir, wie die Nacht verlief. Passe dich an.
+  </div>
+  <button class="mbtn" onclick="document.getElementById('helpModal').classList.remove('show')">Verstanden</button>
+</div></div>
+
+<div id="toasts"></div>
+<div id="rotate"><div class="ic">↻</div><div class="serif" style="font-size:22px">Bitte dreh dein Tablet</div><div style="color:var(--ink-dim)">Der Wärter braucht das Querformat.</div></div>
+<pre id="smoke"></pre>
+
+<script>
+'use strict';
+/* ═══════════ Utils ═══════════ */
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+const mapRng=mulberry32(20260627);
+let grng=mulberry32((Date.now()%2147483647)|1);
+const R=(a,b)=>a+grng()*(b-a), RI=(a,b)=>Math.floor(R(a,b+1));
+const angN=a=>{a%=360;return a<0?a+360:a};
+const angD=(a,b)=>{const d=angN(a-b);return d>180?360-d:d};
+const dist=(x1,y1,x2,y2)=>Math.hypot(x2-x1,y2-y1);
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const fmt=n=>Math.round(n).toString();
+
+/* ═══════════ Karte ═══════════ */
+const T=40, COLS=34, ROWS=21, W=COLS*T, H=ROWS*T;
+const CX=17*T, CY=10.5*T, RX=6.1*T, RY=4.1*T;
+const DEEP=0,SHAL=1,SAND=2,LAND=3,REEF=4;
+const tiles=[]; const noiseOff=[]; for(let i=0;i<16;i++)noiseOff.push(mapRng()*2-1);
+function shoreNoise(ang){ // weiche zufällige Küstenlinie
+  const f=ang/360*16, i0=Math.floor(f)%16, i1=(i0+1)%16, t=f-Math.floor(f);
+  return noiseOff[i0]*(1-t)+noiseOff[i1]*t;
+}
+function landAt(wx,wy){
+  const ang=angN(Math.atan2(wy-CY,wx-CX)*180/Math.PI);
+  const k=1+0.16*shoreNoise(ang);
+  return Math.hypot((wx-CX)/(RX*k),(wy-CY)/(RY*k))<1;
+}
+for(let r=0;r<ROWS;r++){tiles[r]=[];for(let c=0;c<COLS;c++)
+  tiles[r][c]=landAt(c*T+T/2,r*T+T/2)?LAND:DEEP;}
+// Sand = Landrand, Shallow = küstennahes Wasser
+for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++){
+  if(tiles[r][c]!==LAND)continue;
+  for(const[dr,dc]of[[0,1],[0,-1],[1,0],[-1,0]]){
+    const rr=r+dr,cc=c+dc;
+    if(rr>=0&&rr<ROWS&&cc>=0&&cc<COLS&&tiles[rr][cc]===DEEP){tiles[r][c]=SAND;break}
+  }
+}
+for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++){
+  if(tiles[r][c]!==DEEP)continue;
+  outer:for(let dr=-2;dr<=2;dr++)for(let dc=-2;dc<=2;dc++){
+    const rr=r+dr,cc=c+dc;
+    if(rr>=0&&rr<ROWS&&cc>=0&&cc<COLS&&(tiles[rr][cc]===LAND||tiles[rr][cc]===SAND))
+      {tiles[r][c]=SHAL;break outer}
+  }
+}
+// Riff-Cluster rund um die Insel (Bildschirmwinkel: 0=O, 90=S, 180=W, 270=N)
+function ellipsePt(deg,off){const a=deg*Math.PI/180;
+  return{x:CX+Math.cos(a)*(RX+off*T),y:CY+Math.sin(a)*(RY+off*T)}}
+const reefClusters=[];
+[[15,2.6,2],[70,3.1,3],[135,2.7,2],[195,3.3,3],[248,2.5,2],[318,2.9,3]].forEach(([deg,off,n],ci)=>{
+  const p=ellipsePt(deg,off), tls=[];
+  for(let i=0;i<n;i++){
+    const c=clamp(Math.round(p.x/T)+ (i? RI(-1,1):0),1,COLS-2);
+    const r=clamp(Math.round(p.y/T)+ (i? RI(-1,1):0),1,ROWS-2);
+    if(tiles[r][c]===DEEP||tiles[r][c]===SHAL){tiles[r][c]=REEF;tls.push({c,r})}
+  }
+  if(tls.length)reefClusters.push({id:ci,x:p.x,y:p.y,tiles:tls});
+});
+// Leuchtturm-Kachel
+const LH={c:Math.round(CX/T),r:Math.round(CY/T)};
+const LHX=LH.c*T+T/2, LHY=LH.r*T+T/2;
+
+/* ═══════════ Balance ═══════════ */
+const OCT=['O','SO','S','SW','W','NW','N','NO'];        // Bildschirmwinkel-Zentren:
+const OCTA=[0,45,90,135,180,225,270,315];               // 0=rechts, 90=unten
+const LINSE=[{rng:7.5,w:26},{rng:9.5,w:34},{rng:12,w:42}];
+const UHRW =[30,18,10];            // Minuten pro Umdrehung
+const BRENN=[12,9,6.5];            // Öl pro Stunde
+const UPG_COST={linse:[[110,40],[240,80]],uhrwerk:[[100,0],[210,0]],brennkammer:[[95,0],[200,0]]};
+const GUIDE_MEM=0.25;              // h Orientierungs-Gedächtnis
+const BUILD={
+  destille:   {n:'Öl-Destille', d:'+40 Öl pro Morgen', w:80,  place:'land'},
+  netz:       {n:'Treibgutnetz',d:'+14 Treibgut/Morgen, mehr im Sturm', w:50, place:'sand'},
+  boje:       {n:'Leuchtboje',  d:'Sichert ein Riff dauerhaft · 4 Öl/Nacht', w:35, place:'shal'},
+  wellenbrecher:{n:'Wellenbrecher',d:'Fängt Sturmsee ab (3 Treffer)', w:60, place:'shal'},
+  nebelhorn:  {n:'Nebelhorn',   d:'Führt Schiffe bei Nebel in seinem Sektor', w:70, place:'sand'},
+  funkmast:   {n:'Funkmast',    d:'Präzisere Vorhersage', w:65, place:'land'},
+};
+const SHIPNAMES=['Mira','Albatros','Selene','Kormoran','Nordwind','Elenora','Brise','Pelikan',
+  'Sturmvogel','Cassiopeia','Anemone','Delphin','Gute Hoffnung','Morgenrot','Silbermöwe','Fortuna'];
+/* geskriptete Tage: ships/close/wind(oct|-1)/storm 0-3/stormHours/fog(octs)/fogHours */
+const DAYS=[
+  {ships:2,close:0,wind:-1,storm:0,fog:[]},
+  {ships:3,close:1,wind:4, storm:1,sh:[23,27],fog:[]},
+  {ships:3,close:1,wind:5, storm:2,sh:[23,27],fog:[]},
+  {ships:4,close:1,wind:1, storm:0,fog:[2,1],fh:[24,29]},
+  {ships:4,close:2,wind:3, storm:2,sh:[22,26],fog:[4],fh:[20,23]},
+  {ships:6,close:2,wind:-1,storm:0,fog:[]},
+  {ships:5,close:2,wind:6, storm:3,sh:[21,29],fog:[6,7],fh:[26,30]},
+];
+function dayPlan(d){
+  if(d<=DAYS.length)return DAYS[d-1];
+  const storm=grng()<.45?RI(1,3):0;
+  return{ships:3+Math.floor(d*.55+state.ruf/30),close:RI(1,3),
+    wind:storm?RI(0,7):(grng()<.5?RI(0,7):-1),storm,
+    sh:storm?[RI(21,24),RI(25,29)].sort((a,b)=>a-b):undefined,
+    fog:grng()<.4?[RI(0,7)]:[],fh:[RI(20,24),RI(25,30)].sort((a,b)=>a-b)};
+}
+
+/* ═══════════ Zustand ═══════════ */
+let state=null;
+function freshState(){return{
+  day:1,oil:300,wood:140,ruf:10,savedTotal:0,lostTotal:0,seeleute:0,
+  lh:{linse:1,uhrwerk:1,brennkammer:1,mode:'rot',fokusOct:6},
+  structures:[],wrecks:[],tut:0,over7:false
+}}
+function save(){try{localStorage.setItem('leuchtfeuer_v1',JSON.stringify(state))}catch(e){}}
+function load(){try{const s=localStorage.getItem('leuchtfeuer_v1');return s?JSON.parse(s):null}catch(e){return null}}
+
+/* ═══════════ Audio ═══════════ */
+let AC=null,muted=false;
+function ac(){if(!AC)AC=new(window.AudioContext||window.webkitAudioContext)();return AC}
+function tone(f,dur,type,vol,when=0){if(muted)return;const a=ac(),o=a.createOscillator(),g=a.createGain();
+  o.type=type;o.frequency.value=f;o.connect(g);g.connect(a.destination);
+  const t=a.currentTime+when;g.gain.setValueAtTime(0,t);
+  g.gain.linearRampToValueAtTime(vol,t+dur*.2);g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.start(t);o.stop(t+dur+.05)}
+const sndHorn=()=>{tone(98,1.4,'sine',.20);tone(147,1.4,'sine',.12)};
+const sndCrash=()=>{if(muted)return;const a=ac(),b=a.createBuffer(1,a.sampleRate*.4,a.sampleRate),
+  d=b.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=(Math.random()*2-1)*(1-i/d.length);
+  const s=a.createBufferSource(),f=a.createBiquadFilter(),g=a.createGain();
+  f.type='lowpass';f.frequency.value=380;g.gain.value=.5;
+  s.buffer=b;s.connect(f);f.connect(g);g.connect(a.destination);s.start()};
+const sndSaved=()=>{tone(523,.18,'sine',.14);tone(784,.3,'sine',.12,.14)};
+
+/* ═══════════ Nacht-Simulation ═══════════ */
+const NSTART=20,NEND=30;
+let night=null;
+function beamRange(){return LINSE[state.lh.linse-1].rng*T}
+function beamWidth(){return LINSE[state.lh.linse-1].w}
+function burnRate(){return BRENN[state.lh.brennkammer-1]}
+function activeBojen(){return state.structures.filter(s=>s.type==='boje'&&!s.damaged)}
+function clusterBuoyed(cl){return activeBojen().some(b=>dist(b.c*T+T/2,b.r*T+T/2,cl.x,cl.y)<1.7*T)}
+function oct(wx,wy){return Math.round(angN(Math.atan2(wy-CY,wx-CX)*180/Math.PI)/45)%8}
+function oilPerNight(){
+  return burnRate()*10 + activeBojen().length*4 +
+    state.structures.filter(s=>s.type==='nebelhorn'&&!s.damaged).length*2;
+}
+function makeShips(plan){
+  const ships=[];const names=[...SHIPNAMES].sort(()=>grng()-.5);
+  const mk=(close,i)=>{
+    const e2w=grng()<.5, laneN=grng()<.5;
+    const y=laneN?3.2*T+R(-.4,.4)*T:(ROWS-3.2)*T+R(-.4,.4)*T;
+    const x0=e2w?W+30:-30, x1=e2w?-120:W+120;
+    let wps;
+    if(close){ // Küstenfahrer: schmiegt sich um die Inselseite
+      const side=laneN?-1:1; // nördl. Lane → um Nordseite (Winkel um 270), sonst Süd (90)
+      const base=side<0?270:90, sgn=e2w?-1:1;
+      wps=[{x:x0,y},...[-55,0,55].map(o=>{
+        const p=ellipsePt(base+sgn*o,1.9);return{x:p.x,y:p.y}}),{x:x1,y}];
+    }else wps=[{x:x0,y},{x:x1,y}];
+    return{name:names[i%names.length],x:x0,y,wps,wi:1,close,
+      spawnT:NSTART+.5+grng()*(close?3:4.5),alive:true,done:false,guidedUntil:-9,wander:0,lit:false};
+  };
+  let i=0;
+  for(let k=0;k<plan.ships-plan.close;k++)ships.push(mk(false,i++));
+  for(let k=0;k<plan.close;k++)ships.push(mk(true,i++));
+  return ships.sort((a,b)=>a.spawnT-b.spawnT);
+}
+function startNight(){
+  const plan=dayPlan(state.day);
+  night={t:NSTART,plan,ships:makeShips(plan),events:[],beamA:R(0,360),
+    oilOut:false,lastStormHour:-1,saved:[],lost:[],dmg:[],oilUsed:0,speed:1,done:false};
+  evt(NSTART,'Das Leuchtfeuer brennt.','');
+  if(plan.storm)evt(NSTART,`Der Wind frischt auf. Sturm aus ${OCT[plan.wind]} erwartet.`,'');
+  setPhase('night');sndHorn();
+}
+function evt(t,txt,kind){night.events.push({t,txt,kind});
+  if(!SMOKE)renderTicker()}
+function fogActive(){const p=night.plan;
+  return p.fog.length&&p.fh&&night.t>=p.fh[0]&&night.t<=p.fh[1]}
+function stormActive(){const p=night.plan;
+  return p.storm>0&&p.sh&&night.t>=p.sh[0]&&night.t<=p.sh[1]}
+function shipGuided(sh){
+  if(night.t<sh.guidedUntil)return true;
+  // Boje am nächsten Riff?
+  const cl=nearReefCluster(sh.x,sh.y,2.0*T);
+  if(cl&&clusterBuoyed(cl)&&!night.oilOut)return true;
+  // Nebelhorn bei Nebel
+  if(fogActive()){
+    const so=oct(sh.x,sh.y);
+    for(const h of state.structures)if(h.type==='nebelhorn'&&!h.damaged&&!night.oilOut){
+      const ho=oct(h.c*T+T/2,h.r*T+T/2);
+      if(ho===so&&dist(sh.x,sh.y,h.c*T+T/2,h.r*T+T/2)<7*T)return true;
+    }
+  }
+  return false;
+}
+function nearReefCluster(x,y,rad){
+  let best=null,bd=rad;
+  for(const cl of reefClusters)for(const tl of cl.tiles){
+    const d=dist(x,y,tl.c*T+T/2,tl.r*T+T/2);
+    if(d<bd){bd=d;best=cl}
+  }
+  return best;
+}
+function inFogSector(x,y){if(!fogActive())return false;
+  return night.plan.fog.includes(oct(x,y))}
+function beamLights(sh){
+  if(night.oilOut)return false;
+  const d=dist(sh.x,sh.y,LHX,LHY);
+  let rng=beamRange(); if(inFogSector(sh.x,sh.y))rng*=.55;
+  if(d>rng)return false;
+  const b=angN(Math.atan2(sh.y-LHY,sh.x-LHX)*180/Math.PI);
+  return angD(b,night.beamA)<beamWidth()/2;
+}
+function stepNight(dtH){
+  const n=night,p=n.plan;
+  n.t+=dtH;
+  // Strahl
+  if(!n.oilOut){
+    if(state.lh.mode==='rot'){
+      n.beamA=angN(n.beamA+360/UHRW[state.lh.uhrwerk-1]*(dtH*60));
+    }else{
+      const c=OCTA[state.lh.fokusOct];
+      n.fokPh=(n.fokPh||0)+dtH*60/UHRW[state.lh.uhrwerk-1]*3*360;
+      n.beamA=angN(c+Math.sin(n.fokPh*Math.PI/180)*45);
+    }
+  }
+  // Öl
+  let drain=burnRate()+activeBojen().length*.4+
+    state.structures.filter(s=>s.type==='nebelhorn'&&!s.damaged).length*.2;
+  if(!n.oilOut){
+    state.oil-=drain*dtH;n.oilUsed+=drain*dtH;
+    if(state.oil<=0){state.oil=0;n.oilOut=true;
+      evt(n.t,'Das Öl ist verbraucht — das Feuer erlischt!','hot');}
+  }
+  // Sturm-Schäden stundenweise
+  if(stormActive()){
+    const hour=Math.floor(n.t);
+    if(hour>n.lastStormHour){n.lastStormHour=hour;stormHit(p)}
+  }
+  // Schiffe
+  for(const sh of n.ships){
+    if(!sh.alive||sh.done||n.t<sh.spawnT)continue;
+    if(beamLights(sh))sh.guidedUntil=n.t+GUIDE_MEM,sh.lit=true;else sh.lit=false;
+    const wp=sh.wps[sh.wi];
+    let dx=wp.x-sh.x,dy=wp.y-sh.y;const dd=Math.hypot(dx,dy)||1;
+    if(dd<T*.8&&sh.wi<sh.wps.length-1){sh.wi++;continue}
+    let vx=dx/dd,vy=dy/dd;
+    const spd=(sh.close?3.6:4.6)*T;
+    // Sturm-Drift: Wind AUS Richtung wind → treibt in Gegenrichtung
+    if(stormActive()){
+      const wa=(OCTA[p.wind]+180)*Math.PI/180;
+      vx+=Math.cos(wa)*.42*p.storm*.5;vy+=Math.sin(wa)*.42*p.storm*.5;
+    }
+    // Riff-Logik
+    const cl=nearReefCluster(sh.x,sh.y,1.9*T);
+    if(cl){
+      const tl=cl.tiles[0],rx=tl.c*T+T/2,ry=tl.r*T+T/2;
+      const g=shipGuided(sh);
+      if(g){ // sicher herumsteuern
+        const ax=sh.x-rx,ay=sh.y-ry,ad=Math.hypot(ax,ay)||1;
+        vx+=ax/ad*1.25;vy+=ay/ad*1.25;
+      }else{
+        sh.wander+=dtH;
+        vx+=Math.sin(sh.wander*9)*.5;vy+=Math.cos(sh.wander*7)*.5;
+        const near=Math.min(...cl.tiles.map(t2=>dist(sh.x,sh.y,t2.c*T+T/2,t2.r*T+T/2)));
+        const pH=.38*(1+.7*(stormActive()?p.storm:0))*(inFogSector(sh.x,sh.y)?1.6:1);
+        if(near<0.6*T||grng()<pH*dtH){wreck(sh);continue}
+      }
+    }
+    const vd=Math.hypot(vx,vy)||1;
+    sh.x+=vx/vd*spd*dtH;sh.y+=vy/vd*spd*dtH;
+    if(sh.x<-60||sh.x>W+60){sh.done=true;n.saved.push(sh);
+      evt(n.t,`Die ‚${sh.name}' hat die Insel sicher passiert.`,'good');
+      if(!SMOKE)sndSaved();}
+  }
+  if(n.t>=NEND&&!n.done){n.done=true;dawn()}
+}
+function wreck(sh){
+  sh.alive=false;
+  const men=RI(4,12);
+  state.wrecks.push({x:sh.x,y:sh.y,loot:RI(45,75),name:sh.name});
+  night.lost.push({name:sh.name,men});
+  evt(night.t,`Die ‚${sh.name}' ist auf das Riff gelaufen! ${men} Seeleute verloren.`,'hot');
+  if(!SMOKE)sndCrash();
+}
+function stormHit(p){
+  const wOct=p.wind;
+  const brs=state.structures.filter(s=>s.type==='wellenbrecher'&&s.hp>0&&
+    angD(OCTA[oct(s.c*T+T/2,s.r*T+T/2)],OCTA[wOct])<=45);
+  if(brs.length){
+    const b=brs[RI(0,brs.length-1)];b.hp--;
+    evt(night.t,`Schwere See trifft den Wellenbrecher (${OCT[oct(b.c*T+T/2,b.r*T+T/2)]}). ${b.hp>0?'Er hält.':'Er bricht!'}`,b.hp>0?'':'hot');
+  }else if(grng()<.45){
+    const cs=state.structures.filter(s=>(s.type==='netz'||s.type==='nebelhorn')&&!s.damaged&&
+      angD(OCTA[oct(s.c*T+T/2,s.r*T+T/2)],OCTA[wOct])<=45);
+    if(cs.length){const s=cs[RI(0,cs.length-1)];s.damaged=true;
+      evt(night.t,`${BUILD[s.type].n} an der ${OCT[oct(s.c*T+T/2,s.r*T+T/2)]}-Küste beschädigt!`,'hot')}
+  }
+}
+/* ═══════════ Morgen ═══════════ */
+let lastReport=null;
+function dawn(){
+  const n=night;
+  // Wer das Morgengrauen auf See erlebt, hat die Nacht überstanden.
+  for(const sh of n.ships)if(sh.alive&&!sh.done){
+    sh.done=true;n.saved.push(sh);
+    evt(NEND,`Die ‚${sh.name}' segelt ins Morgenlicht.`,'good');
+  }
+  let tollOil=0,tollWood=0;
+  for(const sh of n.saved){tollOil+=RI(10,20)*(sh.close?2:1);tollWood+=RI(8,16)*(sh.close?2:1)}
+  const nets=state.structures.filter(s=>s.type==='netz'&&!s.damaged).length;
+  const netY=nets*14+(n.plan.storm?nets*22:0);
+  const dest=state.structures.filter(s=>s.type==='destille'&&!s.damaged).length*40;
+  const strand=8;
+  state.oil+=tollOil+dest;state.wood+=tollWood+netY+strand;
+  state.ruf+=n.saved.length+n.saved.filter(s=>s.close).length-n.lost.length*3;
+  state.ruf=Math.max(0,state.ruf);
+  state.savedTotal+=n.saved.length;state.lostTotal+=n.lost.length;
+  state.seeleute+=n.lost.reduce((a,l)=>a+l.men,0);
+  lastReport={day:state.day,saved:n.saved.map(s=>s.name),lost:n.lost,
+    tollOil,tollWood,netY,dest,strand,oilUsed:Math.round(n.oilUsed),
+    oilOut:n.oilOut,dmg:state.structures.filter(s=>s.damaged||(s.hp!==undefined&&s.hp<3)),
+    storm:n.plan.storm};
+  state.day++;save();
+  if(SMOKE){smokeLog.push({day:lastReport.day,saved:n.saved.length,lost:n.lost.length,
+    oil:Math.round(state.oil),wood:Math.round(state.wood)});return}
+  setPhase('report');
+}
+function reportHtml(r){
+  let h=`<h2>Nacht ${r.day} — Logbuch des Wärters</h2>
+  <div class="sub">${r.storm?'Eine Sturmnacht.':'Eine ruhige See.'} Niedergeschrieben im Morgengrauen.</div>`;
+  h+=`<div class="log"><h4>Schiffe</h4>`;
+  if(r.saved.length)h+=`<span class="good">Sicher passiert: ${r.saved.map(n=>`‚${n}'`).join(', ')}</span><br>`;
+  if(r.lost.length)for(const l of r.lost)
+    h+=`<span class="bad">Die ‚${l.name}' lief auf — ${l.men} Seeleute verloren.</span><br>`;
+  if(!r.saved.length&&!r.lost.length)h+=`<span style="color:var(--ink-dim)">Keine Passagen diese Nacht.</span>`;
+  h+=`</div><div class="log"><h4>Einnahmen</h4>
+    Zölle der Geretteten: <span class="oil">+${r.tollOil} Öl</span>, +${r.tollWood} Treibgut<br>
+    Destillen: <span class="oil">+${r.dest} Öl</span> · Netze: +${r.netY} Treibgut · Strandgut: +${r.strand}</div>`;
+  h+=`<div class="log"><h4>Öl &amp; Schäden</h4>
+    Verbrannt: ${r.oilUsed} Öl${r.oilOut?' — <span class="bad">das Feuer erlosch in der Nacht!</span>':''}<br>`;
+  if(r.dmg.length)for(const s of r.dmg)
+    h+=`<span class="bad">${BUILD[s.type].n}${s.hp!==undefined?` (${s.hp}/3)`:''} beschädigt.</span><br>`;
+  else h+=`Keine neuen Schäden.`;
+  h+=`</div><div class="log"><h4>Ruf</h4>Der Name des Wärters: <b class="oil">${state.ruf}</b></div>`;
+  if(state.wrecks.length)h+=`<div class="log" style="color:var(--ink-dim);font-size:13px">
+    ${state.wrecks.length} Wrack${state.wrecks.length>1?'s':''} vor der Küste markiert — tagsüber bergbar.</div>`;
+  h+=`<button class="mbtn" id="newDayBtn">Neuer Tag</button>`;
+  return h;
+}
+function finaleHtml(){
+  return `<h2>Sieben Nächte überstanden</h2>
+  <div class="sub">Der Jahrhundertsturm liegt hinter dir. Ein Zwischenstand:</div>
+  <div class="log">
+    Schiffe sicher geleitet: <b class="good">${state.savedTotal}</b><br>
+    Schiffe verloren: <b class="bad">${state.lostTotal}</b> (${state.seeleute} Seeleute)<br>
+    Ruf des Wärters: <b class="oil">${state.ruf}</b></div>
+  <div class="log" style="color:var(--ink-dim)">Ab jetzt wird die See jede Nacht fordernder. Wie lange hält dein Licht?</div>
+  <button class="mbtn" id="endlessBtn">Weiter — endlose Nächte</button>`;
+}
+
+/* ═══════════ Vorhersage ═══════════ */
+function funkLevel(){return state.structures.filter(s=>s.type==='funkmast'&&!s.damaged).length}
+function forecastHtml(){
+  const p=dayPlan(state.day),fl=funkLevel();
+  const wind=p.wind>=0?OCT[p.wind]:null;
+  let h='';
+  if(fl===0){
+    if(p.storm>=2)h+=`<span class="warn">Der Himmel über ${wind} verspricht nichts Gutes. Sturm wahrscheinlich.</span><br>`;
+    else if(p.storm===1)h+=`Steife Brise aus ${wind}.<br>`;
+    else h+=`Ruhige See erwartet.<br>`;
+    if(p.fog.length)h+=`Es riecht nach Nebel.<br>`;
+    h+=`<span class="dim">Erwartet: ${p.ships<4?'wenige':'mehrere'} Schiffe.</span>
+    <div class="frow dim"><span class="ic">📡</span>Ein Funkmast würde Genaueres verraten.</div>`;
+  }else{
+    if(p.storm)h+=`<div class="frow"><span class="ic">🌊</span><span class="warn">Sturm Stärke ${p.storm} aus ${wind}, ${p.sh[0]}–${p.sh[1]%24} Uhr</span></div>`;
+    else h+=`<div class="frow"><span class="ic">🌙</span>Ruhige See${wind?`, Brise aus ${wind}`:''}</div>`;
+    if(p.fog.length)h+=`<div class="frow"><span class="ic">🌫</span>Nebel im ${p.fog.map(o=>OCT[o]).join(' & ')}, ${p.fh[0]%24}–${p.fh[1]%24} Uhr</div>`;
+    h+=`<div class="frow"><span class="ic">⛵</span>${p.ships} Schiffe, davon ${p.close} Küstenfahrer</div>`;
+    if(fl>=2)h+=`<div class="frow dim"><span class="ic">·</span>Küstenfahrer zahlen doppelt — und fahren dicht an den Riffen.</div>`;
+  }
+  if(p.storm&&wind)h+=`<div class="frow dim"><span class="ic">⚠</span>Wind aus ${wind} drückt Schiffe zur ${OCT[(p.wind+4)%8]}-Seite.</div>`;
+  return h;
+}
+
+/* ═══════════ Rendering ═══════════ */
+const cv=document.getElementById('cv'),ctx=cv.getContext('2d');
+let phase='title'; // title | day | night | report
+let selBuild=null,selStruct=null,frame=0;
+function setPhase(p){
+  phase=p;
+  document.getElementById('nightHud').style.display=p==='night'?'flex':'none';
+  document.getElementById('ticker').style.display=p==='night'?'flex':'none';
+  document.getElementById('pult').style.display='flex';
+  document.body.classList.toggle('titling',p==='title');
+  const nb=document.getElementById('nightBtn');
+  nb.disabled=p!=='day';
+  nb.textContent=p==='night'?'Die Nacht läuft — sieh ihr zu.':'🌙  Nacht anbrechen lassen';
+  if(p==='report'){document.getElementById('reportCard').innerHTML=
+      state.day>7&&!state.over7&&state.day===8?finaleHtml():reportHtml(lastReport);
+    document.getElementById('reportModal').classList.add('show');
+    const nb=document.getElementById('newDayBtn');if(nb)nb.onclick=()=>{closeReport()};
+    const eb=document.getElementById('endlessBtn');if(eb)eb.onclick=()=>{state.over7=true;save();closeReport()};
+  }
+  if(p==='day'){selBuild=null;selStruct=null;renderPult()}
+}
+function closeReport(){document.getElementById('reportModal').classList.remove('show');
+  night=null;setPhase('day')}
+function seaColor(){return phase==='night'?'#0D1D2E':'#1B3A54'}
+function drawWorld(){
+  const nightMode=phase==='night';
+  ctx.clearRect(0,0,W,H);
+  // See
+  const g=ctx.createRadialGradient(CX,CY,RX,CX,CY,W*.7);
+  g.addColorStop(0,nightMode?'#11263B':'#1F415E');
+  g.addColorStop(1,nightMode?'#081220':'#132C42');
+  ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+  // Wellen (dezent)
+  ctx.strokeStyle=nightMode?'rgba(255,255,255,.045)':'rgba(255,255,255,.07)';
+  ctx.lineWidth=1.5;
+  for(let i=0;i<26;i++){
+    const y=(i*37+frame*.15)%H,x=(i*211)%W;
+    ctx.beginPath();ctx.arc(x,y,9,Math.PI*.15,Math.PI*.85);ctx.stroke();
+  }
+  // Flachwasser andeuten
+  for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++)if(tiles[r][c]===SHAL){
+    ctx.fillStyle=nightMode?'rgba(80,130,160,.06)':'rgba(120,180,200,.10)';
+    ctx.fillRect(c*T,r*T,T,T);
+  }
+  // Insel
+  for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++){
+    const t=tiles[r][c];
+    if(t===SAND){ctx.fillStyle=nightMode?'#4a4436':'#C0A97B';ctx.fillRect(c*T,r*T,T,T)}
+    else if(t===LAND){ctx.fillStyle=nightMode?'#1e2a1c':'#48603C';ctx.fillRect(c*T,r*T,T,T)}
+  }
+  // Riffe
+  for(const cl of reefClusters){
+    const buoyed=clusterBuoyed(cl);
+    for(const tl of cl.tiles){
+      const x=tl.c*T+T/2,y=tl.r*T+T/2;
+      ctx.fillStyle=nightMode?'rgba(30,38,46,.9)':'#2E3B44';
+      ctx.beginPath();
+      ctx.moveTo(x-13,y+8);ctx.lineTo(x-4,y-10);ctx.lineTo(x+3,y+2);
+      ctx.lineTo(x+9,y-7);ctx.lineTo(x+14,y+8);ctx.closePath();ctx.fill();
+      ctx.fillStyle='rgba(255,255,255,'+(nightMode?'.10':'.30')+')';
+      for(let i=0;i<3;i++)ctx.fillRect(x-12+i*9,y+9,5,2);
+    }
+    if(phase==='day'){ // Sicherungs-Status tagsüber
+      ctx.strokeStyle=buoyed?'rgba(255,201,107,.8)':'rgba(224,101,82,.55)';
+      ctx.setLineDash([4,4]);ctx.lineWidth=1.5;
+      ctx.beginPath();ctx.arc(cl.x,cl.y,1.7*T,0,7);ctx.stroke();ctx.setLineDash([]);
+    }
+  }
+  // Bauten
+  for(let i=0;i<state.structures.length;i++)drawStruct(state.structures[i],i===selStruct,nightMode);
+  // Wracks
+  for(const w of state.wrecks){
+    ctx.save();ctx.translate(w.x,w.y);ctx.rotate(.5);
+    ctx.fillStyle=nightMode?'#2a2622':'#4a4238';
+    ctx.beginPath();ctx.moveTo(-14,4);ctx.lineTo(-8,-6);ctx.lineTo(10,-6);ctx.lineTo(15,4);ctx.closePath();ctx.fill();
+    ctx.restore();
+    if(phase==='day'){
+      ctx.fillStyle='#FFC96B';
+      ctx.font='11px system-ui';ctx.textAlign='center';
+      ctx.fillText('⚓ bergen',w.x,w.y-14);
+    }
+  }
+  // Leuchtturm
+  drawLighthouse(nightMode);
+  // Nacht-Effekte
+  if(nightMode&&night){
+    drawBeam();
+    for(const sh of night.ships)if(sh.alive&&!sh.done&&night.t>=sh.spawnT)drawShip(sh);
+    if(fogActive())drawFog();
+    if(stormActive())drawRain();
+    // Dunkel-Vignette
+    const v=ctx.createRadialGradient(CX,CY,H*.3,CX,CY,W*.75);
+    v.addColorStop(0,'rgba(2,6,12,0)');v.addColorStop(1,'rgba(2,6,12,.55)');
+    ctx.fillStyle=v;ctx.fillRect(0,0,W,H);
+  }
+  // Bau-Vorschau
+  if(phase==='day'&&selBuild)drawPlacement();
+  if(phase==='title')drawBeamTitle();
+}
+function drawStruct(s,sel,nm){
+  const x=s.c*T+T/2,y=s.r*T+T/2;
+  ctx.save();ctx.translate(x,y);
+  if(s.damaged)ctx.globalAlpha=.45;
+  switch(s.type){
+    case 'destille':
+      ctx.fillStyle=nm?'#6b4f2a':'#9C7442';ctx.fillRect(-9,-11,18,20);
+      ctx.fillStyle=nm?'#3a2d18':'#5c451f';ctx.fillRect(-9,-11,18,5);
+      ctx.strokeStyle=nm?'#8a6a3a':'#C9A227';ctx.lineWidth=2;
+      ctx.beginPath();ctx.moveTo(6,-11);ctx.quadraticCurveTo(14,-16,14,-4);ctx.stroke();break;
+    case 'netz':
+      ctx.strokeStyle=nm?'#5a6a72':'#8FA3AD';ctx.lineWidth=1.5;
+      for(let i=-9;i<=9;i+=6){ctx.beginPath();ctx.moveTo(i,-9);ctx.lineTo(i,9);ctx.stroke();
+        ctx.beginPath();ctx.moveTo(-9,i);ctx.lineTo(9,i);ctx.stroke()}break;
+    case 'boje':{
+      const blink=nm&&!(night&&night.oilOut)&&Math.floor(frame/22)%2===0;
+      ctx.fillStyle=nm?'#7a3f2a':'#B0563A';
+      ctx.beginPath();ctx.arc(0,0,7,0,7);ctx.fill();
+      ctx.fillStyle=blink?'#FFC96B':(nm?'#7a6a4a':'#E8D9A0');
+      ctx.beginPath();ctx.arc(0,-9,3.4,0,7);ctx.fill();
+      if(blink){ctx.fillStyle='rgba(255,201,107,.25)';ctx.beginPath();ctx.arc(0,-9,10,0,7);ctx.fill()}
+      break}
+    case 'wellenbrecher':
+      ctx.fillStyle=nm?'#3c4650':'#61707C';
+      for(let i=-1;i<=1;i++){ctx.beginPath();ctx.arc(i*12,2,7,Math.PI,0);ctx.fill()}
+      if(s.hp<3){ctx.fillStyle='#E06552';ctx.font='10px system-ui';ctx.textAlign='center';
+        ctx.fillText(s.hp+'/3',0,-10)}break;
+    case 'nebelhorn':
+      ctx.fillStyle=nm?'#5c5648':'#8C8270';
+      ctx.beginPath();ctx.moveTo(-8,8);ctx.lineTo(-2,-8);ctx.lineTo(4,-8);ctx.lineTo(12,8);ctx.closePath();ctx.fill();
+      ctx.fillStyle=nm?'#2c2a24':'#4c463c';ctx.fillRect(-4,4,8,6);break;
+    case 'funkmast':
+      ctx.strokeStyle=nm?'#5a6470':'#94A2B0';ctx.lineWidth=2;
+      ctx.beginPath();ctx.moveTo(-7,10);ctx.lineTo(0,-12);ctx.lineTo(7,10);ctx.stroke();
+      ctx.beginPath();ctx.moveTo(-5,2);ctx.lineTo(5,2);ctx.stroke();
+      ctx.fillStyle=nm&&Math.floor(frame/30)%2?'#E06552':'#8a4438';
+      ctx.beginPath();ctx.arc(0,-12,2.5,0,7);ctx.fill();break;
+  }
+  ctx.globalAlpha=1;
+  if(sel){ctx.strokeStyle='#FFC96B';ctx.lineWidth=2;
+    ctx.strokeRect(-T/2+3,-T/2+3,T-6,T-6)}
+  ctx.restore();
+}
+function drawLighthouse(nm){
+  const x=LHX,y=LHY;
+  ctx.save();ctx.translate(x,y);
+  ctx.fillStyle='rgba(0,0,0,.25)';ctx.beginPath();ctx.ellipse(3,14,14,5,0,0,7);ctx.fill();
+  ctx.fillStyle=nm?'#b8b0a0':'#EFE9DC';ctx.beginPath();
+  ctx.moveTo(-9,12);ctx.lineTo(-6,-16);ctx.lineTo(6,-16);ctx.lineTo(9,12);ctx.closePath();ctx.fill();
+  ctx.fillStyle=nm?'#8a3a30':'#C25548';ctx.fillRect(-8.4,2,16.8,6);
+  ctx.fillRect(-7,-12,14,5);
+  ctx.fillStyle=nm?'#FFC96B':'#3a4650';
+  ctx.fillRect(-5,-24,10,8);
+  if(nm&&night&&!night.oilOut){
+    ctx.fillStyle='rgba(255,217,138,.9)';ctx.beginPath();ctx.arc(0,-20,5,0,7);ctx.fill();
+    ctx.fillStyle='rgba(255,201,107,.2)';ctx.beginPath();ctx.arc(0,-20,14,0,7);ctx.fill();
+  }
+  ctx.fillStyle=nm?'#6a6458':'#B8AF9E';
+  ctx.beginPath();ctx.moveTo(-6,-24);ctx.lineTo(0,-31);ctx.lineTo(6,-24);ctx.closePath();ctx.fill();
+  ctx.restore();
+}
+function drawBeam(){
+  if(night.oilOut)return;
+  const a=night.beamA*Math.PI/180,w=beamWidth()/2*Math.PI/180,rg=beamRange();
+  const x=LHX,y=LHY-20;
+  const grd=ctx.createRadialGradient(x,y,10,x,y,rg);
+  grd.addColorStop(0,'rgba(255,217,138,.42)');grd.addColorStop(.7,'rgba(255,201,107,.16)');
+  grd.addColorStop(1,'rgba(255,201,107,0)');
+  ctx.fillStyle=grd;ctx.beginPath();ctx.moveTo(x,y);
+  ctx.arc(x,y,rg,a-w,a+w);ctx.closePath();ctx.fill();
+}
+function drawBeamTitle(){
+  const a=(frame*.008)%(Math.PI*2),w=.24,rg=11*T,x=LHX,y=LHY-20;
+  const grd=ctx.createRadialGradient(x,y,10,x,y,rg);
+  grd.addColorStop(0,'rgba(255,217,138,.4)');grd.addColorStop(1,'rgba(255,201,107,0)');
+  ctx.fillStyle=grd;ctx.beginPath();ctx.moveTo(x,y);ctx.arc(x,y,rg,a-w,a+w);ctx.closePath();ctx.fill();
+  const v=ctx.createRadialGradient(CX,CY,H*.2,CX,CY,W*.7);
+  v.addColorStop(0,'rgba(2,6,12,.1)');v.addColorStop(1,'rgba(2,6,12,.7)');
+  ctx.fillStyle=v;ctx.fillRect(0,0,W,H);
+}
+function drawShip(sh){
+  const nx=sh.wps[sh.wi].x-sh.x,ny=sh.wps[sh.wi].y-sh.y;
+  const ang=Math.atan2(ny,nx);
+  ctx.save();ctx.translate(sh.x,sh.y);
+  // Kielwasser
+  ctx.strokeStyle='rgba(255,255,255,.14)';ctx.lineWidth=2;
+  ctx.beginPath();ctx.moveTo(-Math.cos(ang)*14,-Math.sin(ang)*14);
+  ctx.lineTo(-Math.cos(ang)*30,-Math.sin(ang)*30);ctx.stroke();
+  ctx.rotate(ang);
+  const inDanger=!sh.lit&&nearReefCluster(sh.x,sh.y,1.9*T)&&!shipGuided(sh);
+  ctx.fillStyle=sh.lit?'#D8CFBA':'#96917f';
+  ctx.beginPath();ctx.moveTo(13,0);ctx.lineTo(5,-5);ctx.lineTo(-10,-5);
+  ctx.lineTo(-10,5);ctx.lineTo(5,5);ctx.closePath();ctx.fill();
+  ctx.fillStyle='#c9584a';ctx.beginPath();ctx.arc(6,-3,1.6,0,7);ctx.fill();
+  ctx.fillStyle='#7fc8a9';ctx.beginPath();ctx.arc(6,3,1.6,0,7);ctx.fill();
+  ctx.restore();
+  if(sh.lit){ctx.fillStyle='rgba(233,228,214,.85)';ctx.font='11px Georgia,serif';
+    ctx.textAlign='center';ctx.fillText('‚'+sh.name+'’',sh.x,sh.y-14)}
+  if(inDanger&&Math.floor(frame/14)%2===0){
+    ctx.fillStyle='#E06552';ctx.font='bold 15px system-ui';ctx.textAlign='center';
+    ctx.fillText('!',sh.x,sh.y-13)}
+}
+function drawFog(){
+  for(const o of night.plan.fog){
+    const p=ellipsePt(OCTA[o],4.4);
+    for(let i=0;i<4;i++){
+      const fx=p.x+Math.sin(frame*.006+i*2.4)*35,fy=p.y+Math.cos(frame*.005+i*1.9)*24;
+      const fg=ctx.createRadialGradient(fx,fy,10,fx,fy,110+i*22);
+      fg.addColorStop(0,'rgba(150,160,168,.16)');fg.addColorStop(1,'rgba(150,160,168,0)');
+      ctx.fillStyle=fg;ctx.beginPath();ctx.arc(fx,fy,110+i*22,0,7);ctx.fill();
+    }
+  }
+}
+function drawRain(){
+  const p=night.plan;const wa=(OCTA[p.wind]+180)*Math.PI/180;
+  const dx=Math.cos(wa)*11,dy=Math.sin(wa)*11;
+  ctx.strokeStyle='rgba(180,200,220,.20)';ctx.lineWidth=1;
+  for(let i=0;i<70*p.storm;i++){
+    const x=((i*127+frame*7)%(W+80))-40,y=(i*83+frame*11)%H;
+    ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x+dx,y+dy);ctx.stroke();
+  }
+}
+function validTile(c,r,place){
+  if(c<0||c>=COLS||r<0||r>=ROWS)return false;
+  if(c===LH.c&&r===LH.r)return false;
+  if(state.structures.some(s=>s.c===c&&s.r===r))return false;
+  const t=tiles[r][c];
+  if(place==='land')return t===LAND;
+  if(place==='sand')return t===SAND;
+  if(place==='shal')return t===SHAL;
+  return false;
+}
+function drawPlacement(){
+  const place=BUILD[selBuild].place;
+  ctx.fillStyle='rgba(255,201,107,.14)';
+  ctx.strokeStyle='rgba(255,201,107,.4)';ctx.lineWidth=1;
+  for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++)if(validTile(c,r,place)){
+    ctx.fillRect(c*T+2,r*T+2,T-4,T-4);ctx.strokeRect(c*T+2,r*T+2,T-4,T-4);
+  }
+}
+
+/* ═══════════ Pult / UI ═══════════ */
+const $=id=>document.getElementById(id);
+function renderTop(){
+  $('gOil').textContent=fmt(state.oil);
+  const per=oilPerNight();
+  const sub=$('gOilSub');sub.textContent=`−${fmt(per)}/Nacht`;
+  sub.className='sub'+(per>state.oil?' warn':'');
+  $('gWood').textContent=fmt(state.wood);
+  $('gSaved').textContent=state.savedTotal;
+}
+function renderPult(){
+  renderTop();
+  $('dayNum').textContent=state.day;
+  $('rufLbl').textContent='Ruf '+state.ruf;
+  $('forecastText').innerHTML=forecastHtml();
+  // Modus
+  $('modeRot').className=state.lh.mode==='rot'?'on':'';
+  $('modeFok').className=state.lh.mode==='fok'?'on':'';
+  const comp=$('compass');comp.style.display=state.lh.mode==='fok'?'grid':'none';
+  comp.innerHTML='';
+  [6,7,0,1,2,3,4,5].forEach(o=>{
+    const b=document.createElement('button');b.textContent=OCT[o];
+    b.className=state.lh.fokusOct===o?'on':'';
+    b.onclick=()=>{state.lh.fokusOct=o;save();renderPult()};
+    comp.appendChild(b);
+  });
+  // Upgrades
+  const U=$('upgrades');U.innerHTML='';
+  [['linse','Linse','Reichweite & Breite des Strahls'],
+   ['uhrwerk','Uhrwerk','Drehgeschwindigkeit'],
+   ['brennkammer','Brennkammer','Weniger Öl pro Stunde']].forEach(([key,nm,d])=>{
+    const lv=state.lh[key];
+    const row=document.createElement('div');row.className='upg';
+    const pips=[1,2,3].map(i=>`<i class="${i<=lv?'on':''}"></i>`).join('');
+    let btn;
+    if(lv>=3)btn=`<span class="buy max">ausgebaut</span>`;
+    else{const[cw,co]=UPG_COST[key][lv-1];
+      const ok=state.wood>=cw&&state.oil>=co;
+      btn=`<button class="buy" data-upg="${key}" ${ok?'':'disabled'}>${cw}T${co?` + ${co}Öl`:''}</button>`}
+    row.innerHTML=`<div class="nm">${nm}<small>${d}</small></div><div class="pips">${pips}</div>${btn}`;
+    U.appendChild(row);
+  });
+  U.querySelectorAll('[data-upg]').forEach(b=>b.onclick=()=>{
+    const k=b.dataset.upg,[cw,co]=UPG_COST[k][state.lh[k]-1];
+    state.wood-=cw;state.oil-=co;state.lh[k]++;save();renderPult();
+  });
+  const per=oilPerNight();
+  const op=$('oilProg');
+  op.textContent=`Heutige Nacht verbrennt ≈ ${fmt(per)} Öl. Vorrat: ${fmt(state.oil)}.`;
+  op.className=per>state.oil?'warn':'';
+  if(per>state.oil)op.textContent+=' Das reicht nicht bis zum Morgen!';
+  // Bauen
+  const BG=$('buildGrid');BG.innerHTML='';
+  for(const[key,b]of Object.entries(BUILD)){
+    if(key==='funkmast'&&funkLevel()>=2)continue;
+    const cost=key==='destille'?Math.round(b.w*Math.pow(1.5,state.structures.filter(s=>s.type==='destille').length)):
+      key==='funkmast'&&funkLevel()===1?145:b.w;
+    const btn=document.createElement('button');
+    btn.className='bbtn'+(selBuild===key?' on':'');
+    btn.disabled=state.wood<cost;
+    btn.innerHTML=`<span class="n">${b.n}</span><span class="c">${cost} Treibgut</span><span class="d">${b.d}</span>`;
+    btn.onclick=()=>{selBuild=selBuild===key?null:key;selStruct=null;
+      $('buildHint').style.display=selBuild?'block':'none';
+      $('buildHint').textContent=selBuild?`Tippe auf eine markierte Kachel (${b.place==='land'?'Inland':b.place==='sand'?'Küste':'Flachwasser'}).`:'';
+      renderPult()};
+    btn.dataset.cost=cost;btn.dataset.key=key;
+    BG.appendChild(btn);
+  }
+  $('buildHint').style.display=selBuild?'block':'none';
+  // Struktur-Info
+  const SI=$('structInfo');
+  if(selStruct!==null&&state.structures[selStruct]){
+    const s=state.structures[selStruct],b=BUILD[s.type];
+    SI.style.display='block';
+    $('siName').textContent=b.n;
+    const broken=s.damaged||(s.hp!==undefined&&s.hp<3);
+    $('siState').textContent=s.damaged?'Beschädigt — außer Betrieb.':
+      s.hp!==undefined?`Zustand: ${s.hp}/3`:'In Betrieb.';
+    $('siState').className='st'+(broken?' bad':'');
+    const A=$('siActions');A.innerHTML='';
+    if(broken){
+      const cost=s.hp!==undefined?(3-s.hp)*20:25;
+      const rb=document.createElement('button');rb.className='buy';
+      rb.textContent=`Reparieren (${cost} T)`;rb.disabled=state.wood<cost;
+      rb.onclick=()=>{state.wood-=cost;if(s.hp!==undefined)s.hp=3;s.damaged=false;
+        save();selStruct=null;renderPult()};
+      A.appendChild(rb);
+    }
+  }else SI.style.display='none';
+}
+function renderTicker(){
+  const el=$('ticker');if(!night)return;
+  el.innerHTML=night.events.slice(-4).map(e=>{
+    const hh=String(Math.floor(e.t)%24).padStart(2,'0'),
+      mm=String(Math.floor((e.t%1)*60)).padStart(2,'0');
+    return`<div class="${e.kind}"><span class="t mono">${hh}:${mm}</span>${e.txt}</div>`;
+  }).join('');
+}
+
+/* ═══════════ Input ═══════════ */
+function canvasPos(ev){
+  const r=cv.getBoundingClientRect();
+  return{x:(ev.clientX-r.left)*(W/r.width),y:(ev.clientY-r.top)*(H/r.height)};
+}
+cv.addEventListener('pointerdown',ev=>{
+  if(phase!=='day')return;
+  const{x,y}=canvasPos(ev);
+  const c=Math.floor(x/T),r=Math.floor(y/T);
+  // Wrack bergen
+  for(let i=0;i<state.wrecks.length;i++){
+    const w=state.wrecks[i];
+    if(dist(x,y,w.x,w.y)<T*.9){
+      state.wood+=w.loot;toast(`Wrack der ‚${w.name}' geborgen: +${w.loot} Treibgut.`);
+      state.wrecks.splice(i,1);save();renderPult();return;
+    }
+  }
+  if(selBuild){
+    let bc=c,br=r;
+    if(!validTile(bc,br,BUILD[selBuild].place)){ // Toleranz: Nachbarkachel
+      let ok=false;
+      for(const[dc,dr]of[[1,0],[-1,0],[0,1],[0,-1]])
+        if(validTile(c+dc,r+dr,BUILD[selBuild].place)){bc=c+dc;br=r+dr;ok=true;break}
+      if(!ok)return;
+    }
+    const cost=+document.querySelector(`[data-key="${selBuild}"]`).dataset.cost;
+    if(state.wood<cost)return;
+    state.wood-=cost;
+    const s={type:selBuild,c:bc,r:br,damaged:false};
+    if(selBuild==='wellenbrecher')s.hp=3;
+    state.structures.push(s);
+    if(selBuild!=='boje'&&selBuild!=='netz')selBuild=null;
+    save();renderPult();return;
+  }
+  // Struktur auswählen
+  selStruct=null;
+  for(let i=0;i<state.structures.length;i++){
+    const s=state.structures[i];
+    if(s.c===c&&s.r===r){selStruct=i;break}
+  }
+  renderPult();
+});
+
+/* ═══════════ Toasts / Tutorial ═══════════ */
+function toast(txt,sub){
+  const el=document.createElement('div');el.className='toast';
+  el.innerHTML=txt+(sub?`<small>${sub}</small>`:'');
+  el.onclick=()=>el.remove();
+  $('toasts').appendChild(el);
+  setTimeout(()=>el.remove(),9000);
+}
+const TUT=[
+  ['Das ist deine Insel.','Das Feuer in der Mitte muss jede Nacht brennen — und es frisst Öl.'],
+  ['Lies die Vorhersage rechts.','Heute Nacht: ruhige See, zwei Schiffe. Die gestrichelten Kreise sind Riffe — rot heißt ungesichert.'],
+  ['Baue deine Wirtschaft.','Ein Treibgutnetz an der Küste, eine Öl-Destille im Inland. Ohne Öl kein Licht.'],
+  ['Wenn du bereit bist:','Lass die Nacht anbrechen. Du siehst ihr zu — eingreifen kannst du nicht mehr.'],
+];
+function tutStep(){
+  if(state.day>1||state.tut>=TUT.length)return;
+  toast(TUT[state.tut][0],TUT[state.tut][1]);state.tut++;save();
+  if(state.tut<TUT.length)setTimeout(tutStep,6500);
+}
+
+/* ═══════════ Buttons ═══════════ */
+$('modeRot').onclick=()=>{state.lh.mode='rot';save();renderPult()};
+$('modeFok').onclick=()=>{state.lh.mode='fok';save();renderPult()};
+$('nightBtn').onclick=()=>{
+  if(phase!=='day')return;
+  const per=oilPerNight();
+  if(state.oil<per*.4&&!confirm('Dein Öl reicht kaum durch die Nacht. Trotzdem anbrechen lassen?'))return;
+  startNight();
+};
+$('muteBtn').onclick=()=>{muted=!muted;$('muteBtn').textContent=muted?'🔇':'🔊'};
+$('helpBtn').onclick=()=>$('helpModal').classList.add('show');
+document.querySelectorAll('#nightHud [data-sp]').forEach(b=>b.onclick=()=>{
+  night.speed=+b.dataset.sp;
+  document.querySelectorAll('#nightHud [data-sp]').forEach(x=>x.classList.toggle('on',x===b));
+});
+$('startBtn').onclick=()=>{state=freshState();save();$('title').classList.add('gone');
+  setPhase('day');tutStep()};
+$('contBtn').onclick=()=>{$('title').classList.add('gone');setPhase('day')};
+
+/* ═══════════ Hauptschleife ═══════════ */
+let lastTs=0;
+function loop(ts){
+  const dt=Math.min(50,ts-lastTs);lastTs=ts;frame++;
+  if(phase==='night'&&night&&!night.done){
+    const dtH=dt/1000/5.5*night.speed;
+    stepNight(dtH);
+    const hh=String(Math.floor(night.t)%24).padStart(2,'0'),
+      mm=String(Math.floor((night.t%1)*60)).padStart(2,'0');
+    $('clock').textContent=hh+':'+mm;
+    $('oilHud').textContent='Öl '+fmt(state.oil)+(night.oilOut?' — dunkel':'');
+    renderTop();
+  }
+  drawWorld();
+  requestAnimationFrame(loop);
+}
+
+/* ═══════════ Smoke-Test (?smoke=N) ═══════════ */
+const params=new URLSearchParams(location.search);
+const SMOKE=params.has('smoke');
+const smokeLog=[];
+function runSmoke(nNights){
+  state=freshState();
+  // Basis-Ausbau, damit die Telemetrie realistisch ist
+  const sandT=[],landT=[],shalT=[];
+  for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++){
+    if(validTile(c,r,'sand'))sandT.push({c,r});
+    if(validTile(c,r,'land'))landT.push({c,r});
+    if(validTile(c,r,'shal'))shalT.push({c,r});
+  }
+  state.structures.push({type:'destille',...landT[0],damaged:false});
+  state.structures.push({type:'netz',...sandT[0],damaged:false});
+  // 2 Bojen an die ersten Cluster
+  for(const cl of reefClusters.slice(0,2)){
+    let best=null,bd=1e9;
+    for(const t2 of shalT){const d=dist(t2.c*T+T/2,t2.r*T+T/2,cl.x,cl.y);
+      if(d<bd){bd=d;best=t2}}
+    if(best&&bd<1.6*T)state.structures.push({type:'boje',...best,damaged:false});
+  }
+  for(let i=0;i<nNights;i++){
+    startNight();
+    let guard=0;
+    while(!night.done&&guard++<20000)stepNight(0.01);
+  }
+  const out={nights:smokeLog,finalRuf:state.ruf,structures:state.structures.length};
+  const el=$('smoke');el.style.display='block';el.textContent='SMOKE\n'+JSON.stringify(out,null,1);
+  document.title='SMOKE_DONE';
+}
+
+/* ═══════════ Boot ═══════════ */
+function boot(){
+  document.body.classList.add('titling');
+  const saved=load();
+  if(SMOKE){$('title').classList.add('gone');runSmoke(+params.get('smoke')||5);
+    requestAnimationFrame(loop);return}
+  if(params.get('shot')==='night'){
+    state=saved||freshState();state.day=3;$('title').classList.add('gone');
+    startNight();for(let i=0;i<800;i++)stepNight(0.005); // ≈ 23:00 Uhr
+    requestAnimationFrame(loop);return;
+  }
+  if(params.get('shot')==='day'){
+    state=saved||freshState();$('title').classList.add('gone');
+    setPhase('day');requestAnimationFrame(loop);return;
+  }
+  if(saved&&saved.day>1){
+    state=saved;
+    $('contBtn').style.display='inline-block';
+    $('contBtn').textContent=`Weiter (Tag ${state.day})`;
+    $('startBtn').textContent='Neu beginnen';
+  }else state=freshState();
+  renderPult();
+  requestAnimationFrame(loop);
+}
+boot();
+</script>
