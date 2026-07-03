@@ -1,8 +1,7 @@
 <title>Leuchtfeuer — Prototyp</title>
 <style>
   :root{
-    --void:#050912; --deep:#0A101F;
-    --glass:rgba(11,18,34,.86); --glass2:rgba(16,25,46,.92);
+    --void:#050912; --glass:rgba(11,18,34,.88); --glass2:rgba(16,25,46,.94);
     --hair:rgba(111,231,220,.16); --hair2:rgba(111,231,220,.34);
     --ink:#E9EEF4; --dim:#93A2B8; --faint:#5A6880;
     --soul:#6FE7DC; --gold:#EFC97F; --wood:#C9A87F; --rose:#E8708C; --violet:#9D8CD8;
@@ -14,149 +13,149 @@
     overflow:hidden;touch-action:none;user-select:none;-webkit-user-select:none}
   .serif{font-family:'Iowan Old Style','Palatino Linotype',Palatino,Georgia,serif}
   .mono{font-family:ui-monospace,'SF Mono',Consolas,monospace}
-  .notch{clip-path:polygon(9px 0,100% 0,100% calc(100% - 9px),calc(100% - 9px) 100%,0 100%,0 9px)}
+  .notch{clip-path:polygon(7px 0,100% 0,100% calc(100% - 7px),calc(100% - 7px) 100%,0 100%,0 7px)}
   #cv{position:fixed;inset:0;width:100vw;height:100dvh;touch-action:none}
-  /* ── Schwebende Ressourcen oben links ── */
-  #resBar{position:fixed;top:10px;left:12px;display:flex;gap:8px;z-index:10;align-items:flex-start}
-  .chip{background:var(--glass);border:1px solid var(--hair);padding:7px 12px;
-    display:flex;align-items:center;gap:7px;backdrop-filter:blur(10px);
-    font-variant-numeric:tabular-nums}
-  .chip .ic{font-size:13px}
-  .chip .v{font-size:15px;font-weight:500}
-  .chip .s{font-size:10px;color:var(--faint)}
-  .chip .s.warn{color:var(--rose)}
-  .chip.oil .v{color:var(--soul)} .chip.wd .v{color:var(--wood)} .chip.dk .v{color:var(--gold)}
-  #lvlChip{background:var(--glass);border:1px solid var(--hair);padding:6px 12px;
-    backdrop-filter:blur(10px);min-width:130px}
-  #lvlChip .r1{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
-  #lvlChip .lv{font-size:12px;color:var(--gold);letter-spacing:.1em}
-  #lvlChip .xp{font-size:9.5px;color:var(--faint)}
-  #xpBar{height:3px;background:rgba(111,231,220,.12);margin-top:4px}
+  /* ── Stufe oben links (CoC-Style) ── */
+  #lvlBadge{position:fixed;top:10px;left:12px;z-index:10;display:flex;align-items:center;gap:9px;
+    background:var(--glass);border:1px solid var(--hair);padding:6px 12px 6px 8px;backdrop-filter:blur(10px)}
+  #lvlBadge .dia{width:30px;height:30px;display:flex;align-items:center;justify-content:center;
+    border:1px solid var(--gold);transform:rotate(45deg);flex:none}
+  #lvlBadge .dia b{transform:rotate(-45deg);color:var(--gold);font-size:14px}
+  #lvlBadge .tx{display:flex;flex-direction:column;gap:3px}
+  #lvlBadge .xp{font-size:9px;color:var(--faint);letter-spacing:.08em}
+  #xpBar{width:86px;height:3px;background:rgba(111,231,220,.12)}
   #xpFill{height:100%;background:linear-gradient(90deg,var(--soul),var(--gold));width:0%}
-  #sysBtns{position:fixed;top:10px;right:12px;display:flex;gap:6px;z-index:10}
+  /* ── Ressourcen oben rechts (Icon + Cap-Balken) ── */
+  #resBar{position:fixed;top:10px;right:12px;z-index:10;display:flex;flex-direction:column;gap:5px;align-items:flex-end}
+  .res{display:flex;align-items:center;gap:8px;background:var(--glass);
+    border:1px solid var(--hair);padding:5px 10px;backdrop-filter:blur(10px);min-width:118px}
+  .res .ic{font-size:13px;width:16px;text-align:center}
+  .res .tx{flex:1}
+  .res .v{font-size:13px;font-weight:600;font-variant-numeric:tabular-nums;line-height:1.1}
+  .res .bar{height:2.5px;background:rgba(111,231,220,.12);margin-top:3px}
+  .res .fill{height:100%;background:currentColor;width:0%}
+  .res.wd{color:var(--wood)} .res.dk{color:var(--gold)} .res.oil{color:var(--soul)}
+  .res .v{color:var(--ink)}
+  #sysBtns{display:flex;gap:5px;margin-top:2px}
   .iconbtn{background:var(--glass);border:1px solid var(--hair);color:var(--dim);
-    padding:7px 11px;font-size:13px;cursor:pointer;backdrop-filter:blur(10px)}
+    padding:5px 10px;font-size:12px;cursor:pointer;backdrop-filter:blur(10px)}
   .iconbtn:active,.iconbtn.on{border-color:var(--hair2);color:var(--soul)}
-  /* ── Tag-Anzeige ── */
   #dayChip{position:fixed;top:10px;left:50%;transform:translateX(-50%);z-index:9;
-    background:var(--glass);border:1px solid var(--hair);padding:6px 18px;
-    font-size:13px;letter-spacing:.14em;backdrop-filter:blur(10px)}
-  /* ── Modus-Buttons unten rechts ── */
-  #modeBtns{position:fixed;bottom:14px;right:14px;display:flex;flex-direction:column;gap:8px;z-index:12}
-  #modeBtns button{width:52px;height:52px;border:1px solid var(--hair);cursor:pointer;
-    background:var(--glass);color:var(--dim);font-size:19px;backdrop-filter:blur(10px);
-    display:flex;align-items:center;justify-content:center}
+    background:var(--glass);border:1px solid var(--hair);padding:5px 16px;
+    font-size:12px;letter-spacing:.14em;backdrop-filter:blur(10px)}
+  /* ── Modus & Nacht ── */
+  #modeBtns{position:fixed;bottom:14px;right:14px;display:flex;flex-direction:column;gap:7px;z-index:12}
+  #modeBtns button{width:46px;height:46px;border:1px solid var(--hair);cursor:pointer;
+    background:var(--glass);color:var(--dim);font-size:17px;backdrop-filter:blur(10px);
+    position:relative;display:flex;align-items:center;justify-content:center;flex-direction:column}
   #modeBtns button.on{border-color:var(--gold);color:var(--gold);
-    box-shadow:0 0 18px rgba(239,201,127,.25);background:rgba(239,201,127,.08)}
-  #modeBtns button span{font-size:8.5px;letter-spacing:.1em;position:absolute;
-    transform:translateY(17px);text-transform:uppercase}
-  #modeBtns button{position:relative;flex-direction:column}
-  /* ── Nacht-Button unten links ── */
+    box-shadow:0 0 16px rgba(239,201,127,.25);background:rgba(239,201,127,.08)}
+  #modeBtns button span{font-size:7.5px;letter-spacing:.1em;position:absolute;
+    transform:translateY(15px);text-transform:uppercase}
   #nightBtn{position:fixed;bottom:14px;left:14px;z-index:12;
-    padding:14px 26px;border:none;cursor:pointer;
+    padding:12px 22px;border:none;cursor:pointer;
     background:linear-gradient(135deg,#F2D9A4,#D9A85C);color:#241806;
-    font-size:13px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;
-    clip-path:polygon(12px 0,100% 0,100% calc(100% - 12px),calc(100% - 12px) 100%,0 100%,0 12px);
-    box-shadow:0 0 26px rgba(239,201,127,.25)}
+    font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;
+    clip-path:polygon(11px 0,100% 0,100% calc(100% - 11px),calc(100% - 11px) 100%,0 100%,0 11px);
+    box-shadow:0 0 24px rgba(239,201,127,.25)}
   #nightBtn:active{filter:brightness(.9)}
   #nightBtn.hidden{display:none}
-  /* ── Untere Leiste (Shop / Aktionen / Plan-Chips) ── */
-  #bottomBar{position:fixed;bottom:14px;left:50%;transform:translateX(-50%);z-index:11;
-    display:flex;gap:8px;align-items:flex-end;max-width:min(74vw,880px);
-    overflow-x:auto;overflow-y:visible;padding:6px 4px;scrollbar-width:none}
+  /* ── Untere Leiste ── */
+  #bottomBar{position:fixed;bottom:12px;left:50%;transform:translateX(-50%);z-index:11;
+    display:flex;gap:6px;align-items:flex-end;max-width:min(70vw,760px);
+    overflow-x:auto;padding:4px 2px;scrollbar-width:none}
   #bottomBar::-webkit-scrollbar{display:none}
-  .shopCard{flex:none;width:104px;background:var(--glass2);border:1px solid var(--hair);
-    padding:9px 10px;cursor:pointer;backdrop-filter:blur(10px)}
-  .shopCard.on{border-color:var(--soul);box-shadow:0 0 16px rgba(111,231,220,.2)}
-  .shopCard.dis{opacity:.42}
-  .shopCard .ic{font-size:17px;color:var(--soul)}
-  .shopCard .n{font-size:11px;font-weight:600;margin-top:3px;line-height:1.2}
-  .shopCard .d{font-size:9px;color:var(--faint);margin-top:2px;line-height:1.3}
-  .shopCard .c{font-size:10px;color:var(--wood);margin-top:4px}
-  .shopCard.lock{opacity:.4;cursor:default}
-  /* Aktionsleiste (gewähltes Gebäude) */
-  #actionBar{position:fixed;bottom:14px;left:50%;transform:translateX(-50%);z-index:13;
-    background:var(--glass2);border:1px solid var(--hair2);backdrop-filter:blur(12px);
-    padding:11px 16px;display:none;flex-direction:column;gap:8px;
-    min-width:320px;max-width:min(86vw,560px);
-    clip-path:polygon(11px 0,100% 0,100% calc(100% - 11px),calc(100% - 11px) 100%,0 100%,0 11px)}
-  #actionBar .head{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
-  #actionBar .nm{font-size:14.5px;letter-spacing:.04em}
-  #actionBar .lv{font-size:10px;color:var(--gold);letter-spacing:.14em}
-  #actionBar .eff{font-size:11.5px;color:var(--dim)}
-  #actionBar .eff b{color:var(--soul);font-weight:500}
-  #actionBar .btns{display:flex;gap:7px;flex-wrap:wrap}
-  .abtn{border:1px solid var(--hair2);color:var(--soul);background:transparent;
-    padding:8px 13px;font-size:11.5px;cursor:pointer;letter-spacing:.04em;
-    font-variant-numeric:tabular-nums}
-  .abtn.gold{border-color:rgba(239,201,127,.55);color:var(--gold)}
-  .abtn:disabled{border-color:var(--hair);color:var(--faint)}
-  #infoPop{display:none;font-size:11.5px;color:var(--dim);line-height:1.55;
-    border-left:2px solid var(--hair2);padding:6px 10px}
-  #infoPop b{color:var(--gold);font-weight:500}
-  /* Plan-Chips */
+  .shopCard{flex:none;width:64px;background:var(--glass2);border:1px solid var(--hair);
+    padding:7px 4px;cursor:pointer;backdrop-filter:blur(10px);text-align:center}
+  .shopCard.on{border-color:var(--soul);box-shadow:0 0 14px rgba(111,231,220,.22)}
+  .shopCard.dis{opacity:.4}
+  .shopCard .ic{font-size:18px;color:var(--soul)}
+  .shopCard .c{font-size:9.5px;color:var(--wood);margin-top:3px;font-variant-numeric:tabular-nums}
+  .shopCard.lock{opacity:.35;cursor:default}
   .planChip{flex:none;background:var(--glass2);border:1px solid var(--hair);
-    padding:9px 12px;cursor:pointer;backdrop-filter:blur(10px);max-width:210px}
-  .planChip.on{border-color:var(--soul);box-shadow:0 0 14px rgba(111,231,220,.18)}
-  .planChip .t{font-size:11.5px;font-weight:600;white-space:nowrap}
-  .planChip .d{font-size:10px;color:var(--dim);margin-top:2px;line-height:1.4}
+    padding:7px 10px;cursor:pointer;backdrop-filter:blur(10px);max-width:190px}
+  .planChip.on{border-color:var(--soul);box-shadow:0 0 12px rgba(111,231,220,.18)}
+  .planChip .t{font-size:10.5px;font-weight:600;white-space:nowrap}
+  .planChip .d{font-size:9.5px;color:var(--dim);margin-top:2px;line-height:1.4}
   .planChip .d b{color:var(--gold);font-weight:500}
   .planChip .d .warn{color:var(--rose)}
-  .planChip button{margin-top:5px}
-  /* Nacht-HUD & Ticker */
-  #nightHud{position:fixed;top:62px;left:50%;transform:translateX(-50%);z-index:12;
-    display:none;align-items:center;gap:14px;background:var(--glass);
-    border:1px solid var(--hair);padding:8px 16px;backdrop-filter:blur(10px);
-    clip-path:polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px)}
-  #nightHud .clock{font-size:20px;font-weight:300;letter-spacing:.12em;color:var(--gold)}
-  #nightHud .stat{font-size:11.5px;color:var(--dim);font-variant-numeric:tabular-nums}
-  #nightHud .stat b{color:var(--ink);font-weight:500}
-  #ticker{position:fixed;left:14px;bottom:14px;max-width:46%;z-index:11;
-    display:none;flex-direction:column;gap:4px;pointer-events:none}
-  #ticker div{font-size:12px;color:var(--dim);background:rgba(5,9,18,.82);
-    padding:4px 10px;border-left:2px solid var(--hair);backdrop-filter:blur(6px)}
-  #ticker div.hot{color:var(--ink);border-left-color:var(--rose)}
-  #ticker div.good{border-left-color:var(--soul)}
-  #ticker .t{color:var(--gold);margin-right:6px;font-size:10.5px}
-  /* Modals / Titel / Toasts */
-  .modal{position:fixed;inset:0;background:rgba(3,6,12,.86);display:none;
+  .planChip button{margin-top:4px;font-size:10px;padding:4px 8px}
+  .abtn{border:1px solid var(--hair2);color:var(--soul);background:transparent;
+    padding:6px 10px;font-size:11px;cursor:pointer;font-variant-numeric:tabular-nums}
+  .abtn.gold{border-color:rgba(239,201,127,.55);color:var(--gold)}
+  .abtn:disabled{border-color:var(--hair);color:var(--faint)}
+  /* ── Auswahl: Icon-Buttons (CoC) ── */
+  #actIcons{position:fixed;bottom:12px;left:50%;transform:translateX(-50%);z-index:13;
+    display:none;flex-direction:column;align-items:center;gap:6px}
+  #actName{font-size:11px;letter-spacing:.1em;color:var(--ink);
+    background:var(--glass);border:1px solid var(--hair);padding:4px 12px;backdrop-filter:blur(8px)}
+  #actName b{color:var(--gold);font-weight:500}
+  #actRow{display:flex;gap:7px}
+  .actB{width:46px;height:46px;border:1px solid var(--hair2);cursor:pointer;
+    background:var(--glass2);color:var(--soul);font-size:17px;backdrop-filter:blur(10px);
+    position:relative;display:flex;align-items:center;justify-content:center;flex-direction:column}
+  .actB span{font-size:7px;letter-spacing:.06em;position:absolute;transform:translateY(15px);
+    text-transform:uppercase;color:var(--dim)}
+  .actB.gold{color:var(--gold);border-color:rgba(239,201,127,.5)}
+  .actB.off{color:var(--faint)}
+  .actB:disabled{opacity:.4}
+  /* ── Gebäude-Panel (CoC-Style) ── */
+  .modal{position:fixed;inset:0;background:rgba(3,6,12,.82);display:none;
     align-items:center;justify-content:center;z-index:40;padding:18px;backdrop-filter:blur(4px)}
   .modal.show{display:flex}
   .mcard{background:var(--glass2);border:1px solid var(--hair2);
-    max-width:560px;width:100%;max-height:88dvh;overflow-y:auto;padding:28px 32px;
-    clip-path:polygon(18px 0,100% 0,100% calc(100% - 18px),calc(100% - 18px) 100%,0 100%,0 18px);
+    max-width:520px;width:100%;max-height:88dvh;overflow-y:auto;padding:24px 28px;
+    clip-path:polygon(16px 0,100% 0,100% calc(100% - 16px),calc(100% - 16px) 100%,0 100%,0 16px);
     box-shadow:0 0 60px rgba(111,231,220,.08)}
-  .mcard h2{font-size:22px;margin-bottom:4px;font-weight:400;letter-spacing:.06em;text-wrap:balance}
-  .mcard .sub{color:var(--dim);font-size:13px;margin-bottom:16px;font-style:italic}
-  .log{border-top:1px solid var(--hair);padding:11px 0;font-size:14px;line-height:1.6}
-  .log h4{font-size:10px;letter-spacing:.28em;text-transform:uppercase;
-    color:var(--soul);margin-bottom:6px;font-weight:400;opacity:.8}
+  .mcard h2{font-size:20px;margin-bottom:3px;font-weight:400;letter-spacing:.06em}
+  .mcard .sub{color:var(--dim);font-size:12.5px;margin-bottom:14px;font-style:italic}
+  .log{border-top:1px solid var(--hair);padding:10px 0;font-size:13.5px;line-height:1.6}
+  .log h4{font-size:9.5px;letter-spacing:.28em;text-transform:uppercase;
+    color:var(--soul);margin-bottom:5px;font-weight:400;opacity:.8}
   .log .good{color:var(--soul)} .log .bad{color:var(--rose)} .log .oil{color:var(--gold)}
-  .mbtn{display:block;width:100%;margin-top:18px;padding:13px;border:none;
+  .statRow{display:flex;justify-content:space-between;padding:7px 0;border-top:1px solid var(--hair);font-size:13px}
+  .statRow .nx{color:var(--soul)}
+  .mbtn{display:block;width:100%;margin-top:16px;padding:12px;border:none;
     background:linear-gradient(135deg,#F2D9A4,#D9A85C);color:#241806;
-    font-size:13.5px;font-weight:600;cursor:pointer;letter-spacing:.14em;text-transform:uppercase;
-    clip-path:polygon(13px 0,100% 0,100% calc(100% - 13px),calc(100% - 13px) 100%,0 100%,0 13px)}
-  .mbtn.ghost{background:transparent;border:1px solid var(--hair);color:var(--dim);margin-top:9px}
+    font-size:13px;font-weight:600;cursor:pointer;letter-spacing:.14em;text-transform:uppercase;
+    clip-path:polygon(12px 0,100% 0,100% calc(100% - 12px),calc(100% - 12px) 100%,0 100%,0 12px)}
+  .mbtn:disabled{background:var(--glass);color:var(--faint)}
+  .mbtn.ghost{background:transparent;border:1px solid var(--hair);color:var(--dim);margin-top:8px}
+  /* Nacht-HUD & Ticker */
+  #nightHud{position:fixed;top:56px;left:50%;transform:translateX(-50%);z-index:12;
+    display:none;align-items:center;gap:13px;background:var(--glass);
+    border:1px solid var(--hair);padding:7px 15px;backdrop-filter:blur(10px);
+    clip-path:polygon(9px 0,100% 0,100% calc(100% - 9px),calc(100% - 9px) 100%,0 100%,0 9px)}
+  #nightHud .clock{font-size:19px;font-weight:300;letter-spacing:.12em;color:var(--gold)}
+  #nightHud .stat{font-size:11px;color:var(--dim);font-variant-numeric:tabular-nums}
+  #nightHud .stat b{color:var(--ink);font-weight:500}
+  #ticker{position:fixed;left:14px;bottom:14px;max-width:46%;z-index:11;
+    display:none;flex-direction:column;gap:4px;pointer-events:none}
+  #ticker div{font-size:11.5px;color:var(--dim);background:rgba(5,9,18,.84);
+    padding:4px 10px;border-left:2px solid var(--hair);backdrop-filter:blur(6px)}
+  #ticker div.hot{color:var(--ink);border-left-color:var(--rose)}
+  #ticker div.good{border-left-color:var(--soul)}
+  #ticker .t{color:var(--gold);margin-right:6px;font-size:10px}
+  /* Titel / Toasts / Rotate */
   #title{position:fixed;inset:0;z-index:50;display:flex;align-items:center;justify-content:center;
     flex-direction:column;gap:8px;pointer-events:none;
     background:radial-gradient(ellipse at center,rgba(3,6,12,.12) 25%,rgba(3,6,12,.94) 100%)}
   #title.gone{display:none}
-  body.titling #resBar,body.titling #sysBtns,body.titling #modeBtns,
+  body.titling #resBar,body.titling #lvlBadge,body.titling #modeBtns,
   body.titling #nightBtn,body.titling #bottomBar,body.titling #dayChip{visibility:hidden}
-  #title .eyebrow{font-size:10px;letter-spacing:.32em;text-transform:uppercase;
-    color:var(--soul);margin-bottom:6px}
+  #title .eyebrow{font-size:10px;letter-spacing:.32em;text-transform:uppercase;color:var(--soul);margin-bottom:6px}
   #title h1{font-size:clamp(40px,6.5vw,74px);letter-spacing:.42em;font-weight:200;padding-left:.42em;
     text-shadow:0 0 44px rgba(239,201,127,.4),0 0 12px rgba(111,231,220,.3)}
   #title p{color:var(--dim);font-size:14px;margin-bottom:26px;font-style:italic}
   #title button{pointer-events:auto}
-  #toasts{position:fixed;bottom:84px;left:50%;transform:translateX(-50%);z-index:45;
-    display:flex;flex-direction:column;gap:8px;align-items:center;width:min(520px,90vw)}
+  #toasts{position:fixed;bottom:78px;left:50%;transform:translateX(-50%);z-index:45;
+    display:flex;flex-direction:column;gap:8px;align-items:center;width:min(500px,88vw)}
   .toast{background:var(--glass2);border:1px solid var(--hair2);
-    padding:11px 17px;font-size:13px;line-height:1.5;cursor:pointer;width:100%;
+    padding:10px 16px;font-size:12.5px;line-height:1.5;cursor:pointer;width:100%;
     backdrop-filter:blur(10px);box-shadow:0 8px 32px rgba(0,0,0,.5);
-    clip-path:polygon(11px 0,100% 0,100% calc(100% - 11px),calc(100% - 11px) 100%,0 100%,0 11px)}
+    clip-path:polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px)}
   .toast b{color:var(--soul);font-weight:500}
-  .toast small{display:block;color:var(--dim);margin-top:3px;font-size:11.5px}
+  .toast small{display:block;color:var(--dim);margin-top:3px;font-size:11px}
   #rotate{position:fixed;inset:0;z-index:100;background:var(--void);display:none;
     align-items:center;justify-content:center;flex-direction:column;gap:14px;text-align:center;padding:30px}
   #rotate .ic{font-size:48px;color:var(--soul)}
@@ -169,19 +168,22 @@
 
 <canvas id="cv"></canvas>
 
-<div id="resBar">
-  <div class="chip oil notch"><span class="ic">◔</span><span class="v" id="gOil">0</span><span class="s" id="gOilSub"></span></div>
-  <div class="chip wd notch"><span class="ic">▤</span><span class="v" id="gWood">0</span></div>
-  <div class="chip dk notch"><span class="ic">⬡</span><span class="v" id="gCoins">0</span></div>
-  <div id="lvlChip" class="notch">
-    <div class="r1"><span class="lv" id="gLvl">Stufe 1</span><span class="xp" id="gXp"></span></div>
-    <div id="xpBar"><div id="xpFill"></div></div>
-  </div>
+<div id="lvlBadge" class="notch">
+  <div class="dia"><b id="gLvl">1</b></div>
+  <div class="tx"><span class="xp" id="gXp">0/80 XP</span><div id="xpBar"><div id="xpFill"></div></div></div>
 </div>
 <div id="dayChip" class="serif notch">Nacht 1</div>
-<div id="sysBtns">
-  <button class="iconbtn" id="helpBtn">?</button>
-  <button class="iconbtn" id="muteBtn">♪</button>
+<div id="resBar">
+  <div class="res oil notch"><span class="ic">◔</span><div class="tx">
+    <div class="v" id="gOil">0/0</div><div class="bar"><div class="fill" id="oilFill"></div></div></div></div>
+  <div class="res wd notch"><span class="ic">▤</span><div class="tx">
+    <div class="v" id="gWood">0</div><div class="bar"><div class="fill" id="woodFill"></div></div></div></div>
+  <div class="res dk notch"><span class="ic">⬡</span><div class="tx">
+    <div class="v" id="gCoins">0</div><div class="bar"><div class="fill" id="coinFill"></div></div></div></div>
+  <div id="sysBtns">
+    <button class="iconbtn" id="helpBtn">?</button>
+    <button class="iconbtn" id="muteBtn">♪</button>
+  </div>
 </div>
 
 <div id="modeBtns">
@@ -191,11 +193,9 @@
 <button id="nightBtn">🌙 Nacht</button>
 
 <div id="bottomBar"></div>
-<div id="actionBar" class="notch">
-  <div class="head"><span class="nm" id="abName"></span><span class="lv" id="abLvl"></span></div>
-  <div class="eff" id="abEff"></div>
-  <div id="infoPop"></div>
-  <div class="btns" id="abBtns"></div>
+<div id="actIcons">
+  <div id="actName" class="notch"></div>
+  <div id="actRow"></div>
 </div>
 
 <div id="nightHud">
@@ -211,27 +211,28 @@
 <div id="title">
   <div class="eyebrow">Ein Wächter · Eine Insel · Das letzte Licht</div>
   <h1>LEUCHTFEUER</h1>
-  <p class="serif">Die See ist dunkel geworden. Bring sie sicher vorbei.</p>
+  <p class="serif">Die See würfelt jede Nacht neu. Bring sie sicher vorbei.</p>
   <button class="mbtn" id="startBtn" style="width:auto;padding:13px 48px">Dienst antreten</button>
   <button class="mbtn ghost" id="contBtn" style="width:auto;padding:10px 32px;display:none">Weiter</button>
 </div>
 
 <div class="modal" id="reportModal"><div class="mcard serif" id="reportCard"></div></div>
+<div class="modal" id="buildModal"><div class="mcard" id="buildCard"></div></div>
 <div class="modal" id="helpModal"><div class="mcard">
   <h2 class="serif">Das Handwerk des Wärters</h2>
   <div class="sub">Kurzregeln des Prototyps</div>
   <div class="log">
-    <b>Karte:</b> Ziehen = bewegen · Kneifen = zoomen. Unten rechts wechselst du
-    zwischen <b>⚓ Plan</b> und <b>⚒ Bau</b>.<br><br>
-    <b>Bau:</b> Hex-Grid an. Unten der Shop (kostet <span style="color:var(--wood)">Treibholz</span>).
-    Gebäude antippen → Leiste mit <b>Info · Ausbau · Verschieben · Abreißen</b>.
-    Ausbau kostet <span style="color:var(--gold)">Dukaten</span> und braucht mehr Hexes.<br><br>
-    <b>Plan:</b> Unten die erwarteten Schiffe — antippen zeigt die Route. Schiffe fahren
-    um die Insel; <b>Riffe &amp; Bohrplattformen</b> brauchen Orientierung: Strahl,
-    Leuchtboje daneben oder (bei Nebel) Nebelhorn.<br><br>
-    <b>Öl</b> hält Licht, Bojen &amp; Horn durch die Nacht — geht es aus, wird es dunkel.<br><br>
-    <b>Stufen:</b> Geleitete Schiffe geben XP. Jede Stufe vergrößert dein Gewässer —
-    und legt neue Riffe in deine Obhut.
+    <b>Jede Nacht ist neu:</b> <b>Gezeiten</b> legen bei Ebbe Untiefen frei, <b>Sandbänke</b>
+    wandern nach jedem Sturm, die <b>Strömung</b> dreht täglich, und die Schiffe kommen
+    anders. Felsriffe bleiben — deine Bojen dort behalten ihren Wert.<br><br>
+    <b>Öl ist ein Nacht-Budget:</b> ◔ zeigt, wie viel du <i>pro Nacht</i> einsetzen kannst
+    (Destillen &amp; Plattformen erhöhen es). Der Strahl kostet fest; jede <b>scharfe</b> Boje
+    und jedes Horn kostet extra. Im Plan-Modus: <b>Boje antippen = an/aus für die Nacht.</b><br><br>
+    <b>Sandbänke</b> kann man nicht bebojen (der Anker rutscht) — nur Licht &amp; Horn helfen.<br><br>
+    <b>Bau (⚒):</b> Shop unten, Gebäude antippen → Icon-Leiste: ⓘ Panel · ⬆ Ausbau (Dukaten,
+    braucht mehr Hexes) · ✥ Verschieben · 🗑 Abreißen.<br><br>
+    <b>Stufen:</b> XP durch geleitete Schiffe. Dein Gewässer wächst — draußen warten
+    schon die nächsten Riffe und <b>neue Inseln</b> (Schimmer hinter der Grenze).
   </div>
   <button class="mbtn" onclick="document.getElementById('helpModal').classList.remove('show')">Verstanden</button>
 </div></div>
@@ -255,10 +256,10 @@ const lerp=(a,b,t)=>a+(b-a)*t;
 const fmt=n=>Math.round(n).toString();
 const $=id=>document.getElementById(id);
 
-/* ═══════════ Hex-Grid (pointy-top, axial) ═══════════ */
-const HS=27, SQ3=Math.sqrt(3);
+/* ═══════════ Hex-Grid (klein — CoC-Körnung) ═══════════ */
+const HS=17, SQ3=Math.sqrt(3);
 const CX=1400, CY=1000;
-function hexW(){return SQ3*HS} // Breite
+const hexW=()=>SQ3*HS;
 function h2w(q,r){return{x:CX+HS*SQ3*(q+r/2),y:CY+HS*1.5*r}}
 function w2h(x,y){
   const qf=((x-CX)*SQ3/3-(y-CY)/3)/HS, rf=(y-CY)*2/3/HS;
@@ -273,8 +274,7 @@ function hexPath(x,y,s=HS){
   ctx.beginPath();
   for(let i=0;i<6;i++){
     const a=(60*i-30)*Math.PI/180;
-    const px=x+s*Math.cos(a),py=y+s*Math.sin(a);
-    i?ctx.lineTo(px,py):ctx.moveTo(px,py);
+    i?ctx.lineTo(x+s*Math.cos(a),y+s*Math.sin(a)):ctx.moveTo(x+s*Math.cos(a),y+s*Math.sin(a));
   }
   ctx.closePath();
 }
@@ -285,9 +285,10 @@ const noiseOff=[];for(let i=0;i<16;i++)noiseOff.push(mapRng()*2-1);
 function shoreNoise(ang){const f=ang/360*16,i0=Math.floor(f)%16,i1=(i0+1)%16,t=f-Math.floor(f);
   return noiseOff[i0]*(1-t)+noiseOff[i1]*t}
 function shoreK(ang){return 1+0.13*shoreNoise(ang)}
-function islandRX(){return (3.6+0.32*(state.level-1))*hexW()}
+function islandRX(){return (4.6+0.4*(state.level-1))*hexW()}
 function islandRY(){return islandRX()*0.8}
-function terrRX(){return Math.min(16*hexW(),(9.5+1.4*(state.level-1))*hexW())}
+function terrRXAt(l){return Math.min(17*hexW(),(9.5+1.4*(l-1))*hexW())}
+function terrRX(){return terrRXAt(state.level)}
 function terrRY(){return terrRX()*0.72}
 function shorePt(deg,off){const k=shoreK(deg),a=deg*Math.PI/180;
   return{x:CX+Math.cos(a)*(islandRX()*k+off),y:CY+Math.sin(a)*(islandRY()*k+off)}}
@@ -298,68 +299,98 @@ function shoreFactor(wx,wy){
 function inTerritory(wx,wy,pad=0){
   return Math.hypot((wx-CX)/(terrRX()+pad),(wy-CY)/(terrRY()+pad))<=1;
 }
+/* Nebeninseln — freigeschaltet, sobald das Gewässer sie erreicht */
+const ISLETS=[
+  {deg:62, d:11.6, r:2.1, n:'Möweninsel'},
+  {deg:208,d:12.6, r:2.4, n:'Robbenbank'},
+  {deg:318,d:13.8, r:2.2, n:'Handelsfelsen'},
+].map(o=>{
+  const a=o.deg*Math.PI/180;
+  return{...o,x:CX+Math.cos(a)*o.d*hexW(),y:CY+Math.sin(a)*o.d*hexW()*0.72,rw:o.r*hexW()};
+});
+function isletActive(il){return inTerritory(il.x,il.y,-hexW()*.3)}
 const LAND=3,SAND=2,SHAL=1,DEEP=0;
 function terrain(q,r){
   const p=h2w(q,r),f=shoreFactor(p.x,p.y);
-  return f<0.72?LAND:f<1.02?SAND:f<1.55?SHAL:DEEP;
+  if(f<0.74)return LAND;
+  if(f<1.02)return SAND;
+  for(const il of ISLETS)if(isletActive(il)){
+    const d=dist(p.x,p.y,il.x,il.y)/il.rw;
+    if(d<0.62)return LAND;
+    if(d<1.0)return SAND;
+  }
+  return f<1.6?SHAL:DEEP;
 }
-/* Riffe: feste Hex-Positionen, je Cluster 1–2 Hexes */
+function isletFactor(wx,wy){
+  let m=9;
+  for(const il of ISLETS)if(isletActive(il))m=Math.min(m,dist(wx,wy,il.x,il.y)/il.rw);
+  return m;
+}
+/* Felsriffe (statisch) + Untiefen (nur bei Ebbe) */
 const REEF_DEFS=[[15,7.2],[70,6.8],[120,8.6],[160,7.4],[200,10.5],[245,7.0],
-  [275,9.4],[305,7.8],[340,11.2],[45,12.0],[135,12.6],[255,12.2]];
+  [275,9.4],[305,7.8],[340,11.2],[45,12.4],[135,13.0],[255,12.6]];
 const reefClusters=REEF_DEFS.map(([deg,d],i)=>{
   const a=deg*Math.PI/180;
-  const wx=CX+Math.cos(a)*d*hexW(), wy=CY+Math.sin(a)*d*hexW()*0.72;
+  const wx=CX+Math.cos(a)*d*hexW(),wy=CY+Math.sin(a)*d*hexW()*0.72;
   const h0=w2h(wx,wy);const hexes=[h0];
   if(i%2)hexes.push({q:h0.q+HEXN[i%6][0],r:h0.r+HEXN[i%6][1]});
   const c=h2w(h0.q,h0.r);
-  return{id:i,x:c.x,y:c.y,hexes};
+  return{id:'r'+i,x:c.x,y:c.y,hexes,kind:'riff'};
 });
-const reefHexSet=new Set();
-for(const cl of reefClusters)for(const h of cl.hexes)reefHexSet.add(hk(h.q,h.r));
-function activeClusters(){return reefClusters.filter(cl=>inTerritory(cl.x,cl.y,-hexW()*.5))}
-/* Leuchtturm: Zentrum + Ring = 7 Hexes */
+const UNTIEF_DEFS=[[35,5.6],[100,6.1],[180,5.2],[230,8.4],[295,5.8],[350,8.8]];
+const untiefen=UNTIEF_DEFS.map(([deg,d],i)=>{
+  const a=deg*Math.PI/180;
+  const h0=w2h(CX+Math.cos(a)*d*hexW(),CY+Math.sin(a)*d*hexW()*0.72);
+  const c=h2w(h0.q,h0.r);
+  return{id:'u'+i,x:c.x,y:c.y,hexes:[h0],kind:'untief'};
+});
+const blockedHexSet=new Set();
+for(const cl of reefClusters)for(const h of cl.hexes)blockedHexSet.add(hk(h.q,h.r));
+for(const u of untiefen)blockedHexSet.add(hk(u.hexes[0].q,u.hexes[0].r));
+/* Leuchtturm: 7 Hexes */
 const LH0=w2h(CX,CY);
 const lhHexes=[LH0,...HEXN.map(([dq,dr])=>({q:LH0.q+dq,r:LH0.r+dr}))];
 const lhHexSet=new Set(lhHexes.map(h=>hk(h.q,h.r)));
 
 /* ═══════════ Gebäude ═══════════ */
-const FP=[[[0,0]],[[0,0],[1,0]],[[0,0],[1,0],[0,1]]]; // 1 / 2 / 3 Hexes
+const FPO=[[[0,0]],[[0,0],[1,0]],[[0,0],[1,0],[0,1]],[[0,0],[1,0],[0,1],[1,-1]]];
 const BUILD={
   destille:{n:'Öl-Destille',ic:'◉',terr:[LAND,SAND],build:60,maxL:3,hex:[1,2,3],up:[60,140],
-    info:'Destilliert Leuchtöl aus Algen und Harz. Dein Öl hält das Licht am Brennen.',
-    eff:l=>`+${[35,65,105][l-1]} Öl pro Morgen`},
+    info:'Destilliert Leuchtöl aus Algen und Harz.',
+    eff:l=>`+${[4,7,11][l-1]} Öl-Budget pro Nacht`,val:l=>[4,7,11][l-1]},
   netz:{n:'Treibholznetz',ic:'▤',terr:[SAND],build:45,maxL:3,hex:[1,2,2],up:[40,100],
     info:'Fängt Treibholz aus der Brandung. In Sturmnächten deutlich mehr — wenn es hält.',
-    eff:l=>`+${[14,26,42][l-1]} Treibholz pro Morgen`},
+    eff:l=>`+${[14,26,42][l-1]} Treibholz pro Morgen`,val:l=>[14,26,42][l-1]},
   boje:{n:'Leuchtboje',ic:'✦',terr:[SHAL,DEEP],build:30,maxL:1,hex:[1],up:[],
-    info:'Ein verankertes Licht. Neben ein Riff gesetzt, sichert es dieses dauerhaft — ohne Lücken.',
-    eff:()=>'Sichert Gefahren im Umkreis von 2 Hexes · 3 Öl/Nacht'},
+    info:'Ein verankertes Licht. Sichert Felsriffe und Plattformen im Umkreis — aber nur, wenn sie diese Nacht scharf ist. Auf Sandbänken rutscht der Anker: dagegen hilft sie nicht.',
+    eff:()=>'Sichert Fels-Gefahren im Umkreis · 2 Öl/Nacht wenn scharf',val:()=>2},
   wellenbrecher:{n:'Wellenbrecher',ic:'▲',terr:[SHAL],build:55,maxL:2,hex:[2,3],up:[50],
     info:'Steinzähne gegen die Sturmsee. Fängt Treffer ab, die sonst deine Küste träfen.',
-    eff:l=>`Hält ${[3,5][l-1]} Sturm-Treffer stand`},
+    eff:l=>`Hält ${[3,5][l-1]} Sturm-Treffer stand`,val:l=>[3,5][l-1]},
   nebelhorn:{n:'Nebelhorn',ic:'◗',terr:[SAND],build:60,maxL:2,hex:[1,1],up:[60],
-    info:'Sein Ruf trägt durch dicksten Nebel und führt Schiffe in seinem Sektor.',
-    eff:l=>`Führt bei Nebel · Reichweite ${[7,9.5][l-1]} Hexes`},
+    info:'Sein Ruf trägt durch dicksten Nebel — und über Sandbänke hinweg.',
+    eff:l=>`Führt in seinem Sektor · Reichweite ${[8,11][l-1]} Hexes · 2 Öl/Nacht wenn scharf`,val:l=>[8,11][l-1]},
   plattform:{n:'Bohrplattform',ic:'⛭',terr:[DEEP],build:90,maxL:2,hex:[2,3],up:[120],
-    info:'Fördert Öl aus dem Meeresgrund. Aber: ein Hindernis in der Fahrrinne — Schiffe ohne Orientierung laufen dagegen!',
-    eff:l=>`+${[50,90][l-1]} Öl pro Morgen · Gefahr für Schiffe`},
+    info:'Fördert Öl aus dem Meeresgrund — erhöht dein Nacht-Budget deutlich. Aber: ein Hindernis in der Fahrrinne.',
+    eff:l=>`+${[6,10][l-1]} Öl-Budget pro Nacht · Gefahr für Schiffe`,val:l=>[6,10][l-1]},
   funkmast:{n:'Funkmast',ic:'△',terr:[LAND,SAND],build:50,maxL:2,hex:[1,1],up:[50],
-    info:'Fängt Wettermeldungen der Küstenstationen. Je besser, desto genauer die Vorhersage.',
-    eff:l=>l>=2?'Exakte Vorhersage + Böen-Fenster':'Exakte Sturm-Vorhersage'},
+    info:'Fängt Wettermeldungen der Küstenstationen.',
+    eff:l=>l>=2?'Exakte Vorhersage + Böen-Fenster':'Exakte Sturm-Vorhersage',val:l=>l},
 };
 function fpHexes(type,lvl,q,r){
-  return FP[BUILD[type].hex[lvl-1]-1].map(([dq,dr])=>({q:q+dq,r:r+dr}));
+  return FPO[BUILD[type].hex[lvl-1]-1].map(([dq,dr])=>({q:q+dq,r:r+dr}));
 }
 function structHexes(s){return fpHexes(s.type,s.lvl,s.q,s.r)}
 function structCenter(s){
-  const hs=structHexes(s);
-  let x=0,y=0;for(const h of hs){const p=h2w(h.q,h.r);x+=p.x;y+=p.y}
+  const hs=structHexes(s);let x=0,y=0;
+  for(const h of hs){const p=h2w(h.q,h.r);x+=p.x;y+=p.y}
   return{x:x/hs.length,y:y/hs.length};
 }
 function occupiedSet(except){
   const set=new Set(lhHexSet);
-  for(const k of reefHexSet)set.add(k);
+  for(const k of blockedHexSet)set.add(k);
   for(const s of state.structures)if(s!==except)for(const h of structHexes(s))set.add(hk(h.q,h.r));
+  for(const sb of state.sandbanks)set.add(hk(sb.q,sb.r));
   return set;
 }
 function placeOk(type,lvl,q,r,except){
@@ -369,7 +400,7 @@ function placeOk(type,lvl,q,r,except){
     const p=h2w(h.q,h.r);
     if(!inTerritory(p.x,p.y))return false;
     if(!def.terr.includes(terrain(h.q,h.r)))return false;
-    if(type==='plattform'&&shoreFactor(p.x,p.y)<2.1)return false;
+    if(type==='plattform'&&shoreFactor(p.x,p.y)<2.2)return false;
   }
   return true;
 }
@@ -382,15 +413,28 @@ function*hexRange(){
 /* ═══════════ Balance ═══════════ */
 const OCT=['O','SO','S','SW','W','NW','N','NO'];
 const OCTA=[0,45,90,135,180,225,270,315];
-const LINSE=[{rng:6.5,w:26},{rng:8.5,w:34},{rng:11,w:42}];
+const LINSE=[{rng:7.5,w:26},{rng:10,w:34},{rng:13,w:42}];
 const UHRW=[30,18,10],BRENN=[5,4,3];
 const LH_UP={linse:[80,180],uhrwerk:[70,160],brennkammer:[70,150]};
 const GUIDE_MEM=0.25;
 const XP_SHIP=10,XP_CLOSE=22,XP_NIGHT=6;
 function xpNeed(l){return [0,80,200,360,560][l]??(560+(l-4)*250)}
+function woodCap(){return 200+130*(state.level-1)}
+function coinCap(){return 150+110*(state.level-1)}
+function oilCap(){
+  return 9+state.structures.filter(s=>s.type==='destille'&&!s.damaged)
+      .reduce((a,s)=>a+BUILD.destille.val(s.lvl),0)
+    +state.structures.filter(s=>s.type==='plattform'&&!s.damaged)
+      .reduce((a,s)=>a+BUILD.plattform.val(s.lvl),0);
+}
+function oilUsed(){
+  return BRENN[state.lh.brennkammer-1]
+    +state.structures.filter(s=>(s.type==='boje'||s.type==='nebelhorn')&&s.armed&&!s.damaged).length*2;
+}
 const CARGOS=['Getreide','Erz','Tuchballen','Werkzeug','Salz','Bauholz','Glas','Vieh'];
 const SHIPNAMES=['Mira','Albatros','Selene','Kormoran','Nordwind','Elenora','Brise','Pelikan',
   'Sturmvogel','Cassiopeia','Anemone','Delphin','Gute Hoffnung','Morgenrot','Silbermöwe','Fortuna'];
+const TIDES={ebbe:'Ebbe — Untiefen liegen frei!',normal:'Normale Tide',flut:'Springflut — schwere See'};
 const DAYS=[
   {ships:2,close:0,wind:-1,storm:0,fog:[]},
   {ships:3,close:1,wind:4,storm:1,sh:[23,27],fog:[]},
@@ -400,25 +444,53 @@ const DAYS=[
   {ships:6,close:2,wind:-1,storm:0,fog:[]},
   {ships:5,close:2,wind:6,storm:3,sh:[21,29],fog:[6,7],fh:[26,30]},
 ];
-function dayPlan(d){
-  if(d<=DAYS.length)return DAYS[d-1];
-  const storm=grng()<.45?RI(1,3):0;
-  return{ships:3+Math.floor(d*.5+state.level*.8),close:RI(1,3),
-    wind:storm?RI(0,7):(grng()<.5?RI(0,7):-1),storm,
-    sh:storm?[RI(21,24),RI(25,29)].sort((a,b)=>a-b):undefined,
-    fog:grng()<.4?[RI(0,7)]:[],fh:[RI(20,24),RI(25,30)].sort((a,b)=>a-b)};
+/* Plan wird pro Tag EINMAL gewürfelt und gecacht (sonst widerspricht sich die Vorhersage) */
+function getPlan(){
+  if(state.planCache&&state.planCache.day===state.day)return state.planCache.plan;
+  let p;
+  if(state.day<=DAYS.length)p={...DAYS[state.day-1]};
+  else{
+    const storm=grng()<.45?RI(1,3):0;
+    p={ships:3+Math.floor(state.day*.5+state.level*.8),close:RI(1,3),
+      wind:storm?RI(0,7):(grng()<.5?RI(0,7):-1),storm,
+      sh:storm?[RI(21,24),RI(25,29)].sort((a,b)=>a-b):undefined,
+      fog:grng()<.4?[RI(0,7)]:[],fh:[RI(20,24),RI(25,30)].sort((a,b)=>a-b)};
+  }
+  const tr=grng();
+  p.tide=state.day===1?'normal':tr<.35?'ebbe':tr<.8?'normal':'flut';
+  p.cur=state.day===1?{dir:0,str:0}:{dir:RI(0,7),str:grng()<.35?0:RI(1,2)};
+  state.planCache={day:state.day,plan:p};save();
+  return p;
 }
 
 /* ═══════════ Zustand ═══════════ */
 let state=null;
-function freshState(){return{
-  day:1,oil:220,wood:170,coins:40,xp:0,level:1,
-  savedTotal:0,lostTotal:0,seeleute:0,
-  lh:{linse:1,uhrwerk:1,brennkammer:1,mode:'rot',fokusOct:6},
-  structures:[],wrecks:[],tonight:null,tut:0
-}}
-function save(){try{localStorage.setItem('leuchtfeuer_v4',JSON.stringify(state))}catch(e){}}
-function load(){try{const s=localStorage.getItem('leuchtfeuer_v4');return s?JSON.parse(s):null}catch(e){return null}}
+function rollSandbanks(){
+  const out=[];let guard=0;
+  while(out.length<3&&guard++<400){
+    const deg=R(0,360),d=R(4.5,10.5);
+    const wx=CX+Math.cos(deg*Math.PI/180)*d*hexW(),
+      wy=CY+Math.sin(deg*Math.PI/180)*d*hexW()*0.72;
+    const h=w2h(wx,wy),p=h2w(h.q,h.r);
+    if(shoreFactor(p.x,p.y)<1.25)continue;
+    if(isletFactor(p.x,p.y)<1.3)continue;
+    if(blockedHexSet.has(hk(h.q,h.r)))continue;
+    if(out.some(o=>dist(h2w(o.q,o.r).x,h2w(o.q,o.r).y,p.x,p.y)<3*hexW()))continue;
+    if(reefClusters.some(cl=>dist(cl.x,cl.y,p.x,p.y)<2.5*hexW()))continue;
+    out.push({q:h.q,r:h.r});
+  }
+  return out;
+}
+function freshState(){
+  const s={day:1,wood:170,coins:60,xp:0,level:1,
+    savedTotal:0,lostTotal:0,seeleute:0,
+    lh:{linse:1,uhrwerk:1,brennkammer:1,mode:'rot',fokusOct:6},
+    structures:[],wrecks:[],tonight:null,planCache:null,sandbanks:[],tut:0};
+  state=s;s.sandbanks=rollSandbanks();
+  return s;
+}
+function save(){try{localStorage.setItem('leuchtfeuer_v5',JSON.stringify(state))}catch(e){}}
+function load(){try{const s=localStorage.getItem('leuchtfeuer_v5');return s?JSON.parse(s):null}catch(e){return null}}
 
 /* ═══════════ Audio ═══════════ */
 let AC=null,muted=false;
@@ -438,6 +510,43 @@ const sndCrash=()=>{if(muted)return;try{const a=ac(),b=a.createBuffer(1,a.sample
 const sndSaved=()=>{tone(523,.16,'sine',.12);tone(784,.28,'sine',.10,.13)};
 const sndLevel=()=>{tone(392,.2,'sine',.14);tone(523,.2,'sine',.14,.18);tone(659,.4,'sine',.14,.36)};
 
+/* ═══════════ Gefahren dieser Nacht ═══════════ */
+function hazards(plan){
+  const hz=[];
+  for(const cl of reefClusters)if(inTerritory(cl.x,cl.y,-hexW()*.5))
+    hz.push({...cl,buoyable:true});
+  if(plan&&plan.tide==='ebbe')
+    for(const u of untiefen)if(inTerritory(u.x,u.y,-hexW()*.5))
+      hz.push({...u,buoyable:true});
+  for(const sb of state.sandbanks){
+    const p=h2w(sb.q,sb.r);
+    if(inTerritory(p.x,p.y,-hexW()*.5))
+      hz.push({id:'s'+sb.q+sb.r,x:p.x,y:p.y,hexes:[sb],kind:'sand',buoyable:false});
+  }
+  for(const s of state.structures)if(s.type==='plattform'&&!s.damaged){
+    const p=structCenter(s);
+    hz.push({id:'p',x:p.x,y:p.y,hexes:structHexes(s),kind:'plattform',buoyable:true});
+  }
+  return hz;
+}
+function armedBojen(){return state.structures.filter(s=>s.type==='boje'&&s.armed&&!s.damaged)}
+function hazBuoyed(hz){
+  if(!hz.buoyable)return false;
+  return armedBojen().some(b=>{const p=structCenter(b);
+    return dist(p.x,p.y,hz.x,hz.y)<2.6*hexW()});
+}
+function oct(wx,wy){return Math.round(angN(Math.atan2(wy-CY,wx-CX)*180/Math.PI)/45)%8}
+function hazStatus(hz){
+  if(hazBuoyed(hz))return 'wisp';
+  const d=dist(hz.x,hz.y,CX,CY);
+  if(d>beamRange())return 'open';
+  if(state.lh.mode==='rot')return 'light';
+  const b=angN(Math.atan2(hz.y-CY,hz.x-CX)*180/Math.PI);
+  return angD(b,OCTA[state.lh.fokusOct])<=50?'light':'open';
+}
+function beamRange(){return LINSE[state.lh.linse-1].rng*hexW()}
+function beamWidth(){return LINSE[state.lh.linse-1].w}
+
 /* ═══════════ Schiffe ═══════════ */
 function terrPt(deg){const a=deg*Math.PI/180;
   return{x:CX+Math.cos(a)*terrRX(),y:CY+Math.sin(a)*terrRY()}}
@@ -451,13 +560,13 @@ function routeAround(entryDeg,exitDeg,off){
   return wps;
 }
 function generateTonight(){
-  const plan=dayPlan(state.day);
+  const plan=getPlan();
   const names=[...SHIPNAMES].sort(()=>grng()-.5);
   const ships=[];let i=0;
   const mk=close=>{
     const entryDeg=R(0,360),exitDeg=angN(entryDeg+180+R(-50,50));
     const en=terrPt(entryDeg),ex=terrPt(exitDeg);
-    const off=close?1.5:2.4+R(0,1.2);
+    const off=close?1.6:2.6+R(0,1.4);
     const wps=[{x:en.x,y:en.y},...routeAround(entryDeg,exitDeg,off),{x:ex.x,y:ex.y}];
     let len=0;for(let k=1;k<wps.length;k++)len+=dist(wps[k-1].x,wps[k-1].y,wps[k].x,wps[k].y);
     const spd=(close?3.4:4.4)*hexW();
@@ -476,42 +585,15 @@ function generateTonight(){
 /* ═══════════ Nacht ═══════════ */
 const NSTART=20,NEND=30;
 let night=null;
-function beamRange(){return LINSE[state.lh.linse-1].rng*hexW()}
-function beamWidth(){return LINSE[state.lh.linse-1].w}
-function burnRate(){return BRENN[state.lh.brennkammer-1]}
-function activeBojen(){return state.structures.filter(s=>s.type==='boje'&&!s.damaged)}
-function hazards(){
-  const hz=activeClusters().map(cl=>({...cl,plat:false}));
-  for(const s of state.structures)if(s.type==='plattform'&&!s.damaged){
-    const p=structCenter(s);
-    hz.push({id:'p',x:p.x,y:p.y,hexes:structHexes(s),plat:true});
-  }
-  return hz;
-}
-function hazPts(hz){return hz.hexes.map(h=>h2w(h.q,h.r))}
-function hazBuoyed(hz){return activeBojen().some(b=>{const p=structCenter(b);
-  return dist(p.x,p.y,hz.x,hz.y)<2.4*hexW()})}
-function oct(wx,wy){return Math.round(angN(Math.atan2(wy-CY,wx-CX)*180/Math.PI)/45)%8}
-function oilPerNight(){
-  return burnRate()*10+activeBojen().length*3+
-    state.structures.filter(s=>s.type==='nebelhorn'&&!s.damaged).length*2;
-}
-function hazStatus(hz){
-  if(hazBuoyed(hz))return 'wisp';
-  const d=dist(hz.x,hz.y,CX,CY);
-  if(d>beamRange())return 'open';
-  if(state.lh.mode==='rot')return 'light';
-  const b=angN(Math.atan2(hz.y-CY,hz.x-CX)*180/Math.PI);
-  return angD(b,OCTA[state.lh.fokusOct])<=50?'light':'open';
-}
 function startNight(){
   if(!state.tonight)generateTonight();
-  const plan=dayPlan(state.day);
+  const plan=getPlan();
   const ships=state.tonight.map(s=>({...s,x:s.wps[0].x,y:s.wps[0].y,wi:1,
     alive:true,done:false,guidedUntil:-9,wander:0,lit:false}));
-  night={t:NSTART,plan,ships,events:[],beamA:R(0,360),haz:hazards(),
-    oilOut:false,lastStormHour:-1,saved:[],lost:[],oilUsed:0,speed:1,done:false};
+  night={t:NSTART,plan,ships,events:[],beamA:R(0,360),haz:hazards(plan),
+    lastStormHour:-1,saved:[],lost:[],speed:1,done:false};
   evt(NSTART,'Das Leuchtfeuer brennt.','');
+  if(plan.tide==='ebbe')evt(NSTART,'Ebbe — die Untiefen liegen frei.','hot');
   if(plan.storm)evt(NSTART,`Der Wind frischt auf. Sturm aus ${OCT[plan.wind]} erwartet.`,'');
   camNightFit();setPhase('night');sndHorn();
 }
@@ -521,25 +603,22 @@ function fogActive(){const p=night.plan;
 function stormActive(){const p=night.plan;
   return p.storm>0&&p.sh&&night.t>=p.sh[0]&&night.t<=p.sh[1]}
 function nearHazard(x,y,rad){let best=null,bd=rad;
-  for(const hz of night.haz)for(const p of hazPts(hz)){
-    const d=dist(x,y,p.x,p.y);if(d<bd){bd=d;best=hz}}
+  for(const hz of night.haz)for(const h of hz.hexes){
+    const p=h2w(h.q,h.r),d=dist(x,y,p.x,p.y);if(d<bd){bd=d;best=hz}}
   return best}
 function inFogSector(x,y){if(!fogActive())return false;
   return night.plan.fog.includes(oct(x,y))}
 function shipGuided(sh){
   if(night.t<sh.guidedUntil)return true;
   const hz=nearHazard(sh.x,sh.y,2.0*hexW());
-  if(hz&&hazBuoyed(hz)&&!night.oilOut)return true;
-  if(fogActive()){
-    const so=oct(sh.x,sh.y);
-    for(const h of state.structures)if(h.type==='nebelhorn'&&!h.damaged&&!night.oilOut){
-      const p=structCenter(h);
-      if(oct(p.x,p.y)===so&&dist(sh.x,sh.y,p.x,p.y)<(h.lvl>=2?9.5:7)*hexW())return true;
-    }}
+  if(hz&&hazBuoyed(hz))return true;
+  for(const h of state.structures)if(h.type==='nebelhorn'&&h.armed&&!h.damaged){
+    const p=structCenter(h);
+    if(oct(p.x,p.y)===oct(sh.x,sh.y)&&dist(sh.x,sh.y,p.x,p.y)<BUILD.nebelhorn.val(h.lvl)*hexW())return true;
+  }
   return false;
 }
 function beamLights(sh){
-  if(night.oilOut)return false;
   const d=dist(sh.x,sh.y,CX,CY);
   let rng=beamRange();if(inFogSector(sh.x,sh.y))rng*=.55;
   if(d>rng)return false;
@@ -549,19 +628,10 @@ function beamLights(sh){
 function stepNight(dtH){
   const n=night,p=n.plan;
   n.t+=dtH;
-  if(!n.oilOut){
-    if(state.lh.mode==='rot')n.beamA=angN(n.beamA+360/UHRW[state.lh.uhrwerk-1]*(dtH*60));
-    else{const c=OCTA[state.lh.fokusOct];
-      n.fokPh=(n.fokPh||0)+dtH*60/UHRW[state.lh.uhrwerk-1]*3*360;
-      n.beamA=angN(c+Math.sin(n.fokPh*Math.PI/180)*45)}
-  }
-  const drain=burnRate()+activeBojen().length*.3+
-    state.structures.filter(s=>s.type==='nebelhorn'&&!s.damaged).length*.2;
-  if(!n.oilOut){
-    state.oil-=drain*dtH;n.oilUsed+=drain*dtH;
-    if(state.oil<=0){state.oil=0;n.oilOut=true;
-      evt(n.t,'Das Öl ist verbraucht — das Feuer erlischt!','hot')}
-  }
+  if(state.lh.mode==='rot')n.beamA=angN(n.beamA+360/UHRW[state.lh.uhrwerk-1]*(dtH*60));
+  else{const c=OCTA[state.lh.fokusOct];
+    n.fokPh=(n.fokPh||0)+dtH*60/UHRW[state.lh.uhrwerk-1]*3*360;
+    n.beamA=angN(c+Math.sin(n.fokPh*Math.PI/180)*45)}
   if(stormActive()){const hour=Math.floor(n.t);
     if(hour>n.lastStormHour){n.lastStormHour=hour;stormHit(p)}}
   for(const sh of n.ships){
@@ -572,14 +642,25 @@ function stepNight(dtH){
     if(dd<hexW()*.9&&sh.wi<sh.wps.length-1){sh.wi++;continue}
     let vx=dx/dd,vy=dy/dd;
     const spd=(sh.close?3.4:4.4)*hexW();
+    // Strömung: die ganze Nacht, Richtung/Stärke aus der Vorhersage
+    if(p.cur&&p.cur.str){
+      const ca=OCTA[p.cur.dir]*Math.PI/180;
+      vx+=Math.cos(ca)*.11*p.cur.str;vy+=Math.sin(ca)*.11*p.cur.str;
+    }
     if(stormActive()){
       const wa=(OCTA[p.wind]+180)*Math.PI/180;
       vx+=Math.cos(wa)*.2*p.storm;vy+=Math.sin(wa)*.2*p.storm;
     }
+    // Leuchtring: Hauptinsel & Nebeninseln
     const sf=shoreFactor(sh.x,sh.y);
-    if(sf<1.35){
-      const ang=Math.atan2(sh.y-CY,sh.x-CX),push=(1.35-sf)*3.2;
+    if(sf<1.3){
+      const ang=Math.atan2(sh.y-CY,sh.x-CX),push=(1.3-sf)*3.2;
       vx+=Math.cos(ang)*push;vy+=Math.sin(ang)*push;
+    }
+    for(const il of ISLETS)if(isletActive(il)){
+      const f=dist(sh.x,sh.y,il.x,il.y)/il.rw;
+      if(f<1.4){const a2=Math.atan2(sh.y-il.y,sh.x-il.x),pu=(1.4-f)*3;
+        vx+=Math.cos(a2)*pu;vy+=Math.sin(a2)*pu}
     }
     const hz=nearHazard(sh.x,sh.y,1.9*hexW());
     if(hz){
@@ -590,9 +671,10 @@ function stepNight(dtH){
       }else if(state.day>1){
         sh.wander+=dtH;
         vx+=Math.sin(sh.wander*9)*.5;vy+=Math.cos(sh.wander*7)*.5;
-        const near=Math.min(...hazPts(hz).map(p2=>dist(sh.x,sh.y,p2.x,p2.y)));
+        const near=Math.min(...hz.hexes.map(h=>{const p2=h2w(h.q,h.r);
+          return dist(sh.x,sh.y,p2.x,p2.y)}));
         const pH=.32*(1+.7*(stormActive()?p.storm:0))*(inFogSector(sh.x,sh.y)?1.6:1);
-        if(near<0.6*hexW()||grng()<pH*dtH){wreckShip(sh,hz);continue}
+        if(near<0.7*hexW()||grng()<pH*dtH){wreckShip(sh,hz);continue}
       }
     }
     const vd=Math.hypot(vx,vy)||1;
@@ -609,25 +691,29 @@ function wreckShip(sh,hz){
   sh.alive=false;
   const men=RI(3,Math.max(4,sh.crew));
   state.wrecks.push({x:sh.x,y:sh.y,name:sh.name,
-    loot:{w:RI(40,60),coins:RI(6,12),oil:RI(6,14)}});
+    loot:{w:RI(40,60),coins:RI(6,12)}});
   night.lost.push({name:sh.name,men});
-  evt(night.t,hz.plat
-    ?`Die ‚${sh.name}' ist gegen die Bohrplattform gelaufen! ${men} Seeleute verloren.`
-    :`Die ‚${sh.name}' ist auf das Riff gelaufen! ${men} Seeleute verloren.`,'hot');
+  const what=hz.kind==='plattform'?'gegen die Bohrplattform gelaufen':
+    hz.kind==='sand'?'auf die Sandbank gelaufen':
+    hz.kind==='untief'?'auf die Untiefe gelaufen':'auf das Riff gelaufen';
+  evt(night.t,`Die ‚${sh.name}' ist ${what}! ${men} Seeleute verloren.`,'hot');
   if(!SMOKE)sndCrash();
 }
 function stormHit(p){
   const wOct=p.wind;
-  const brs=state.structures.filter(s=>s.type==='wellenbrecher'&&s.hp>0&&
-    angD(OCTA[oct(structCenter(s).x,structCenter(s).y)],OCTA[wOct])<=45);
-  if(brs.length){
-    const b=brs[RI(0,brs.length-1)];b.hp--;
-    evt(night.t,`Schwere See trifft den Wellenbrecher. ${b.hp>0?'Er hält.':'Er bricht!'}`,b.hp>0?'':'hot');
-  }else if(grng()<.45){
-    const cs=state.structures.filter(s=>(s.type==='netz'||s.type==='nebelhorn')&&!s.damaged&&
+  const dmgMul=p.tide==='flut'?2:1;
+  for(let k=0;k<dmgMul;k++){
+    const brs=state.structures.filter(s=>s.type==='wellenbrecher'&&s.hp>0&&
       angD(OCTA[oct(structCenter(s).x,structCenter(s).y)],OCTA[wOct])<=45);
-    if(cs.length){const s=cs[RI(0,cs.length-1)];s.damaged=true;
-      evt(night.t,`${BUILD[s.type].n} an der ${OCT[oct(structCenter(s).x,structCenter(s).y)]}-Küste beschädigt!`,'hot')}
+    if(brs.length){
+      const b=brs[RI(0,brs.length-1)];b.hp--;
+      evt(night.t,`Schwere See trifft den Wellenbrecher. ${b.hp>0?'Er hält.':'Er bricht!'}`,b.hp>0?'':'hot');
+    }else if(grng()<.4){
+      const cs=state.structures.filter(s=>(s.type==='netz'||s.type==='nebelhorn')&&!s.damaged&&
+        angD(OCTA[oct(structCenter(s).x,structCenter(s).y)],OCTA[wOct])<=45);
+      if(cs.length){const s=cs[RI(0,cs.length-1)];s.damaged=true;
+        evt(night.t,`${BUILD[s.type].n} an der ${OCT[oct(structCenter(s).x,structCenter(s).y)]}-Küste beschädigt!`,'hot')}
+    }
   }
 }
 /* ═══════════ Morgen ═══════════ */
@@ -639,28 +725,27 @@ function dawn(){
     evt(NEND,`Die ‚${sh.name}' segelt ins Morgenlicht. (+${sh.toll} ⬡)`,'good');
   }
   let toll=0;for(const sh of n.saved)toll+=sh.toll;
-  const oilY=state.structures.filter(s=>s.type==='destille'&&!s.damaged)
-    .reduce((a,s)=>a+[35,65,105][s.lvl-1],0)
-    +state.structures.filter(s=>s.type==='plattform'&&!s.damaged)
-    .reduce((a,s)=>a+[50,90][s.lvl-1],0);
   const woodY=state.structures.filter(s=>s.type==='netz'&&!s.damaged)
-    .reduce((a,s)=>a+[14,26,42][s.lvl-1]*(n.plan.storm?2.5:1),0);
-  const flutO=8,flutW=10;
-  state.oil+=oilY+flutO;state.coins+=toll;
-  state.wood+=Math.round(woodY)+flutW;
+    .reduce((a,s)=>a+BUILD.netz.val(s.lvl)*(n.plan.storm?2.5:1),0);
+  const flutW=10;
+  const coinsBefore=state.coins,woodBefore=state.wood;
+  state.coins=Math.min(coinCap(),state.coins+toll);
+  state.wood=Math.min(woodCap(),state.wood+Math.round(woodY)+flutW);
+  const coinLost=coinsBefore+toll-state.coins>0;
   const xpGain=n.saved.reduce((a,s)=>a+(s.close?XP_CLOSE:XP_SHIP),0)+XP_NIGHT;
   state.xp+=xpGain;
   const lvlUps=[];
   while(state.xp>=xpNeed(state.level)){state.level++;lvlUps.push(state.level)}
   if(lvlUps.length&&!SMOKE)sndLevel();
+  const banksShifted=n.plan.storm>=2;
+  if(banksShifted)state.sandbanks=rollSandbanks();
   state.savedTotal+=n.saved.length;state.lostTotal+=n.lost.length;
   state.seeleute+=n.lost.reduce((a,l)=>a+l.men,0);
-  lastReport={day:state.day,saved:n.saved,lost:n.lost,toll,oilY,woodY:Math.round(woodY),
-    flutO,flutW,oilUsed:Math.round(n.oilUsed),oilOut:n.oilOut,xpGain,lvlUps,
-    storm:n.plan.storm};
-  state.day++;state.tonight=null;save();
+  lastReport={day:state.day,saved:n.saved,lost:n.lost,toll,woodY:Math.round(woodY),
+    flutW,xpGain,lvlUps,storm:n.plan.storm,banksShifted,coinLost};
+  state.day++;state.tonight=null;state.planCache=null;save();
   if(SMOKE){smokeLog.push({day:lastReport.day,saved:n.saved.length,lost:n.lost.length,
-    oil:Math.round(state.oil),wood:Math.round(state.wood),coins:state.coins,lvl:state.level});return}
+    tide:n.plan.tide,coins:state.coins,lvl:state.level});return}
   setPhase('report');
 }
 function reportHtml(r){
@@ -672,16 +757,14 @@ function reportHtml(r){
     h+=`<span class="bad">Die ‚${l.name}' lief auf — ${l.men} Seeleute verloren.</span><br>`;
   if(!r.saved.length&&!r.lost.length)h+=`<span style="color:var(--dim)">Keine Passagen diese Nacht.</span>`;
   h+=`</div><div class="log"><h4>Einnahmen</h4>
-    Zoll der Geleiteten: <span class="oil">+${r.toll} Dukaten</span><br>
-    Destillen &amp; Plattformen: <span style="color:var(--soul)">+${r.oilY} Öl</span> ·
-    Netze: +${r.woodY} Treibholz · Die Flut: +${r.flutO} Öl, +${r.flutW} Treibholz</div>`;
-  h+=`<div class="log"><h4>Öl &amp; Schäden</h4>
-    Verbrannt: ${r.oilUsed} Öl${r.oilOut?' — <span class="bad">das Feuer erlosch in der Nacht!</span>':''}</div>`;
+    Zoll: <span class="oil">+${r.toll} Dukaten</span>${r.coinLost?' <span class="bad">(Truhe voll!)</span>':''} ·
+    Netze: +${r.woodY} Treibholz · Die Flut: +${r.flutW} Treibholz</div>`;
+  if(r.banksShifted)h+=`<div class="log"><h4>Die See</h4>
+    <span class="bad">Der Sturm hat die Sandbänke verschoben</span> — prüfe die Karte, bevor du die Nacht planst.</div>`;
   h+=`<div class="log"><h4>Erfahrung</h4>+${r.xpGain} XP`;
-  if(r.lvlUps.length)h+=`<br><span class="oil">✦ Stufe ${r.lvlUps.join(' & ')} erreicht — dein Gewässer wächst! Neue Riffe liegen nun in deiner Obhut.</span>`;
+  if(r.lvlUps.length)h+=`<br><span class="oil">✦ Stufe ${r.lvlUps.join(' & ')} erreicht — dein Gewässer wächst!</span>`;
   h+=`</div>`;
-  if(state.wrecks.length)h+=`<div class="log" style="color:var(--dim);font-size:13px">
-    ${state.wrecks.length} Wrack${state.wrecks.length>1?'s':''} vor der Küste — im Plan-Modus bergbar.</div>`;
+  h+=`<div class="log" style="color:var(--dim);font-size:12.5px">Öl-Budget nächste Nacht: ${oilCap()} ◔</div>`;
   h+=`<button class="mbtn" id="newDayBtn">Neuer Tag</button>`;
   return h;
 }
@@ -690,40 +773,36 @@ function reportHtml(r){
 function funkLevel(){const m=state.structures.filter(s=>s.type==='funkmast'&&!s.damaged);
   return m.length?Math.max(...m.map(s=>s.lvl)):0}
 function forecastShort(){
-  const p=dayPlan(state.day),fl=funkLevel();
+  const p=getPlan(),fl=funkLevel();
   const wind=p.wind>=0?OCT[p.wind]:null;
-  let t='',w='';
-  if(fl===0){
-    t=p.storm>=2?`Sturm wahrscheinlich (${wind})`:p.storm===1?`Brise aus ${wind}`:'Stille See';
-    if(p.fog.length)t+=' · Nebel?';
-  }else{
-    t=p.storm?`Sturm ${p.storm} aus ${wind}, ${p.sh[0]%24}–${p.sh[1]%24} Uhr`:'Stille See';
-    if(p.fog.length)t+=` · Nebel im ${p.fog.map(o=>OCT[o]).join('&')}`;
-  }
+  let lines=[];
+  if(fl===0)lines.push(p.storm>=2?`⚠ Sturm wahrscheinlich (${wind})`:p.storm===1?`Brise aus ${wind}`:'Stille See');
+  else lines.push(p.storm?`⚠ Sturm ${p.storm} aus ${wind}, ${p.sh[0]%24}–${p.sh[1]%24} Uhr`:'Stille See');
+  lines.push(TIDES[p.tide]);
+  if(p.cur.str)lines.push(`Strömung ${p.cur.str===2?'stark ':''}→ ${OCT[p.cur.dir]}`);
+  if(p.fog.length)lines.push(`Nebel im ${p.fog.map(o=>OCT[o]).join('&')}`);
   const stats={wisp:0,light:0,open:0};
-  for(const hz of hazards())stats[hazStatus(hz)]++;
-  w=`◆${stats.wisp} ◐${stats.light} <span class="warn">✕${stats.open}</span>`;
-  if(p.storm&&wind)w+=` · drückt nach ${OCT[(p.wind+4)%8]}`;
-  return{t,w,p};
+  for(const hz of hazards(p))stats[hazStatus(hz)]++;
+  return{lines,stats,p};
 }
 
-/* ═══════════ Kamera & Canvas ═══════════ */
+/* ═══════════ Kamera ═══════════ */
 const cv=$('cv'),ctx=cv.getContext('2d');
 let DPR=1;
 function sizeCanvas(){DPR=Math.min(2,devicePixelRatio||1);
   cv.width=VP.w*DPR;cv.height=VP.h*DPR}
 sizeCanvas();
-let cam={x:CX,y:CY,z:1.5},camT={x:CX,y:CY,z:1.5};
+let cam={x:CX,y:CY,z:1.8},camT={x:CX,y:CY,z:1.8};
 function camNightFit(){
   const z=Math.min(VP.w/(2*(terrRX()+2.5*hexW())),VP.h/(2*(terrRY()+2.5*hexW())));
   camT={x:CX,y:CY,z};
 }
-function camDayDefault(){camT={x:CX,y:CY,z:1.45}}
+function camDayDefault(){camT={x:CX,y:CY,z:1.8}}
 function s2w(sx,sy){return{x:(sx-VP.w/2)/cam.z+cam.x,y:(sy-VP.h/2)/cam.z+cam.y}}
 function clampCam(){
-  const mx=terrRX()+3*hexW(),my=terrRY()+3*hexW();
+  const mx=terrRX()+4*hexW(),my=terrRY()+4*hexW();
   cam.x=clamp(cam.x,CX-mx,CX+mx);cam.y=clamp(cam.y,CY-my,CY+my);
-  cam.z=clamp(cam.z,0.35,3.2);
+  cam.z=clamp(cam.z,0.3,3.6);
 }
 
 /* ═══════════ Rendering ═══════════ */
@@ -742,49 +821,37 @@ function drawWorld(){
   g.addColorStop(1,nm?'#07101E':'#0B1C32');
   ctx.fillStyle=g;
   ctx.beginPath();ctx.ellipse(CX,CY,terrRX(),terrRY(),0,0,7);ctx.fill();
-  // Grenz-Aura
   ctx.strokeStyle=`rgba(111,231,220,${.10+Math.sin(frame*.02)*.04})`;
-  ctx.lineWidth=6;ctx.shadowColor='rgba(111,231,220,.5)';ctx.shadowBlur=18;
+  ctx.lineWidth=5;ctx.shadowColor='rgba(111,231,220,.5)';ctx.shadowBlur=16;
   ctx.beginPath();ctx.ellipse(CX,CY,terrRX(),terrRY(),0,0,7);ctx.stroke();ctx.shadowBlur=0;
-  // Glimmer
-  for(let i=0;i<70;i++){
-    const a=i*47%360*Math.PI/180,rr=(i*131%100)/100;
-    const x=CX+Math.cos(a)*terrRX()*rr,y=CY+Math.sin(a)*terrRY()*rr;
-    const tw=.5+Math.sin(frame*.02+i)*.5;
-    ctx.fillStyle=`rgba(140,220,230,${(nm?.04:.06)*tw})`;
-    ctx.fillRect(x,y,2.4,2.4);
-  }
+  // Expansions-Vorschau
+  if(phase==='day')drawExpansion();
+  // Meer-Hexes (immer dezent, im Bau kräftiger)
+  drawSeaHexes(nm);
+  // Strömung
+  if(phase==='day')drawCurrent();
   if(phase==='day'&&dayMode==='plan'&&state.tonight)drawRoutes();
-  if(phase==='day'&&dayMode==='bau')drawHexGrid();
   // Leuchtring
   const lr=.35+Math.sin(frame*.03)*.15;
   shorePathC(0.5*hexW());
   ctx.strokeStyle=`rgba(239,201,127,${nm?lr*.5:lr*.35})`;ctx.lineWidth=2.5;
   ctx.shadowColor='rgba(239,201,127,.6)';ctx.shadowBlur=nm?14:8;ctx.stroke();ctx.shadowBlur=0;
-  // Insel
-  ctx.save();
-  ctx.shadowColor=nm?'rgba(111,231,220,.22)':'rgba(239,201,127,.28)';ctx.shadowBlur=24;
-  shorePathC(0);
-  const ig=ctx.createRadialGradient(CX,CY-20,14,CX,CY,islandRX()*1.2);
-  ig.addColorStop(0,nm?'#19281F':'#2A4133');ig.addColorStop(1,nm?'#0F1A14':'#1B2C21');
-  ctx.fillStyle=ig;ctx.fill();ctx.restore();
-  shorePathC(0);
-  ctx.strokeStyle=nm?'rgba(200,190,150,.25)':'rgba(222,201,150,.5)';ctx.lineWidth=4;ctx.stroke();
-  // Riffe (auf Hexes)
-  for(const cl of activeClusters()){
-    for(const h of cl.hexes){
-      const p=h2w(h.q,h.r);
-      if(phase==='day'){
-        hexPath(p.x,p.y,HS*.92);
-        ctx.strokeStyle='rgba(157,140,216,.3)';ctx.lineWidth=1;ctx.stroke();
-      }
-      drawReef(p.x,p.y,nm);
-    }
-    if(phase==='day')drawHazChip(cl);
+  // Inseln
+  drawIsland(nm);
+  for(const il of ISLETS)if(isletActive(il))drawIslet(il,nm);
+  // Sandbänke
+  for(const sb of state.sandbanks)drawSandbank(sb,nm);
+  // Untiefen
+  const plan=phase!=='title'?getPlan():null;
+  for(const u of untiefen)if(inTerritory(u.x,u.y,-hexW()*.5))
+    drawUntief(u,nm,plan&&plan.tide==='ebbe');
+  // Riffe
+  for(const cl of reefClusters)if(inTerritory(cl.x,cl.y,-hexW()*.5)){
+    for(const h of cl.hexes){const p=h2w(h.q,h.r);drawReef(p.x,p.y,nm)}
   }
-  for(const hz of hazards())if(hz.plat&&phase==='day')drawHazChip(hz);
+  // Status-Chips
+  if(phase==='day'&&plan)for(const hz of hazards(plan))drawHazChip(hz);
   if(phase==='day')drawCoverage();
-  // Bauten
   for(let i=0;i<state.structures.length;i++){
     if(moveIdx===i)continue;
     drawStruct(state.structures[i],selS===i,nm);
@@ -793,14 +860,13 @@ function drawWorld(){
   drawBeacon(nm,selS==='lh');
   if(nm&&night){
     ctx.save();ctx.globalCompositeOperation='lighter';
-    if(!night.oilOut)beamWedge(night.beamA*Math.PI/180,beamWidth()/2*Math.PI/180,beamRange(),.5);
+    beamWedge(night.beamA*Math.PI/180,beamWidth()/2*Math.PI/180,beamRange(),.5);
     ctx.restore();
     for(const sh of night.ships)if(sh.alive&&!sh.done&&night.t>=sh.spawn)drawShip(sh);
     if(fogActive())drawFog();
     if(stormActive())drawRain();
   }
   if(phase==='day'&&(shopSel||moveIdx!==null))drawPlacement();
-  // Vignette
   ctx.setTransform(DPR,0,0,DPR,0,0);
   const v=ctx.createRadialGradient(VP.w/2,VP.h/2,VP.h*.35,VP.w/2,VP.h/2,VP.w*.72);
   v.addColorStop(0,'rgba(2,5,10,0)');v.addColorStop(1,`rgba(2,5,10,${nm?.62:.44})`);
@@ -817,24 +883,108 @@ function shorePathC(off){
     i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y)}
   ctx.closePath();
 }
-function beamWedge(a,w,rg,alpha){
-  const x=CX,y=CY-2.4*hexW();
-  const grd=ctx.createRadialGradient(x,y,8,x,y,rg);
-  grd.addColorStop(0,`rgba(255,224,160,${alpha})`);grd.addColorStop(1,'rgba(239,201,127,0)');
-  ctx.fillStyle=grd;ctx.beginPath();ctx.moveTo(x,y);
-  ctx.arc(x,y,rg,a-w,a+w);ctx.closePath();ctx.fill();
-}
-function drawHexGrid(){
-  const breathe=.12+Math.sin(frame*.025)*.03;
+function drawSeaHexes(nm){
+  if(cam.z<0.55)return;
+  const bau=phase==='day'&&dayMode==='bau';
+  const base=bau?.13:.045;
+  const breathe=base+Math.sin(frame*.025)*(bau?.03:.012);
   for(const h of hexRange()){
     const p=h2w(h.q,h.r);
     if(!inTerritory(p.x,p.y))continue;
     const t=terrain(h.q,h.r);
     hexPath(p.x,p.y,HS-1);
-    ctx.strokeStyle=t===LAND?`rgba(170,230,190,${breathe+.08})`:
-      t===SAND?`rgba(228,206,155,${breathe+.10})`:`rgba(111,231,220,${breathe})`;
+    if(bau){
+      ctx.strokeStyle=t===LAND?`rgba(170,230,190,${breathe+.08})`:
+        t===SAND?`rgba(228,206,155,${breathe+.10})`:`rgba(111,231,220,${breathe})`;
+    }else ctx.strokeStyle=`rgba(111,231,220,${breathe})`;
     ctx.lineWidth=1;ctx.stroke();
   }
+}
+function drawExpansion(){
+  const nx=terrRXAt(state.level+1),ny=nx*0.72;
+  if(nx<=terrRX()+1)return;
+  ctx.setLineDash([7,11]);ctx.lineDashOffset=-frame*.15;
+  ctx.strokeStyle='rgba(111,231,220,.14)';ctx.lineWidth=1.5;
+  ctx.beginPath();ctx.ellipse(CX,CY,nx,ny,0,0,7);ctx.stroke();ctx.setLineDash([]);
+  ctx.fillStyle='rgba(111,231,220,.4)';
+  ctx.font='11px system-ui';ctx.textAlign='center';
+  ctx.fillText('— STUFE '+(state.level+1)+' —',CX,CY-ny-10);
+  // Silhouetten des Kommenden
+  ctx.globalAlpha=.22;
+  for(const cl of reefClusters)
+    if(!inTerritory(cl.x,cl.y,-hexW()*.5)&&
+       Math.hypot((cl.x-CX)/nx,(cl.y-CY)/ny)<=1)
+      for(const h of cl.hexes){const p=h2w(h.q,h.r);drawReef(p.x,p.y,true)}
+  for(const il of ISLETS)
+    if(!isletActive(il)&&Math.hypot((il.x-CX)/nx,(il.y-CY)/ny)<=1.02){
+      ctx.beginPath();ctx.ellipse(il.x,il.y,il.rw*.8,il.rw*.62,0,0,7);
+      ctx.fillStyle='#2A4133';ctx.fill();
+      ctx.font='10px Georgia,serif';ctx.fillStyle='#E9EEF4';
+      ctx.fillText(il.n,il.x,il.y-il.rw-4);
+    }
+  ctx.globalAlpha=1;
+}
+function drawCurrent(){
+  const p=getPlan();if(!p.cur||!p.cur.str)return;
+  const ca=OCTA[p.cur.dir]*Math.PI/180;
+  const dx=Math.cos(ca),dy=Math.sin(ca);
+  ctx.strokeStyle=`rgba(111,231,220,${.10*p.cur.str})`;ctx.lineWidth=1.5;
+  for(let i=0;i<16;i++){
+    const a=i*137.5%360*Math.PI/180,rr=.3+(i*61%60)/100;
+    const x=CX+Math.cos(a)*terrRX()*rr,y=CY+Math.sin(a)*terrRY()*rr;
+    if(shoreFactor(x,y)<1.3)continue;
+    const ph=(frame*1.2+i*40)%80;
+    ctx.beginPath();ctx.moveTo(x+dx*(ph-14),y+dy*(ph-14));
+    ctx.lineTo(x+dx*ph,y+dy*ph);ctx.stroke();
+  }
+}
+function drawIsland(nm){
+  ctx.save();
+  ctx.shadowColor=nm?'rgba(111,231,220,.22)':'rgba(239,201,127,.28)';ctx.shadowBlur=22;
+  shorePathC(0);
+  const ig=ctx.createRadialGradient(CX,CY-20,14,CX,CY,islandRX()*1.2);
+  ig.addColorStop(0,nm?'#19281F':'#2A4133');ig.addColorStop(1,nm?'#0F1A14':'#1B2C21');
+  ctx.fillStyle=ig;ctx.fill();ctx.restore();
+  shorePathC(0);
+  ctx.strokeStyle=nm?'rgba(200,190,150,.25)':'rgba(222,201,150,.5)';ctx.lineWidth=3;ctx.stroke();
+}
+function drawIslet(il,nm){
+  ctx.save();
+  ctx.shadowColor='rgba(111,231,220,.2)';ctx.shadowBlur=14;
+  ctx.beginPath();ctx.ellipse(il.x,il.y,il.rw*.82,il.rw*.66,0,0,7);
+  ctx.fillStyle=nm?'#17251D':'#273D2F';ctx.fill();ctx.restore();
+  ctx.strokeStyle=nm?'rgba(200,190,150,.22)':'rgba(222,201,150,.45)';ctx.lineWidth=2;
+  ctx.beginPath();ctx.ellipse(il.x,il.y,il.rw*.82,il.rw*.66,0,0,7);ctx.stroke();
+  if(phase==='day'){
+    ctx.fillStyle='rgba(233,238,244,.55)';ctx.font='10px Georgia,serif';ctx.textAlign='center';
+    ctx.fillText(il.n,il.x,il.y-il.rw*.75);
+  }
+}
+function drawSandbank(sb,nm){
+  const p=h2w(sb.q,sb.r);
+  ctx.save();ctx.translate(p.x,p.y);
+  ctx.fillStyle=nm?'rgba(180,165,120,.28)':'rgba(210,192,140,.45)';
+  ctx.beginPath();ctx.ellipse(0,0,HS*1.1,HS*.6,Math.sin(sb.q)*.6,0,7);ctx.fill();
+  ctx.strokeStyle='rgba(255,255,255,.15)';ctx.lineWidth=1;
+  ctx.beginPath();ctx.arc(0,3,HS*.7,Math.PI*.1,Math.PI*.9);ctx.stroke();
+  ctx.restore();
+}
+function drawUntief(u,nm,active){
+  const p=h2w(u.hexes[0].q,u.hexes[0].r);
+  ctx.save();ctx.translate(p.x,p.y);
+  if(active){
+    ctx.fillStyle=nm?'#1A222E':'#26313F';
+    ctx.strokeStyle='rgba(157,140,216,.45)';ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(-8,5);ctx.lineTo(-3,-6);ctx.lineTo(2,1);ctx.lineTo(7,-4);ctx.lineTo(9,5);
+    ctx.closePath();ctx.fill();ctx.stroke();
+    ctx.strokeStyle='rgba(255,255,255,.18)';
+    ctx.beginPath();ctx.arc(0,7,7,Math.PI*.1,Math.PI*.9);ctx.stroke();
+  }else{
+    ctx.strokeStyle='rgba(111,231,220,.22)';ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(-6,0);ctx.quadraticCurveTo(-3,-3,0,0);
+    ctx.quadraticCurveTo(3,3,6,0);ctx.stroke();
+  }
+  ctx.restore();
 }
 function drawRoutes(){
   state.tonight.forEach((sh,i)=>{
@@ -856,27 +1006,28 @@ function drawReef(x,y,nm){
   ctx.save();ctx.translate(x,y);
   ctx.fillStyle=nm?'#191F2C':'#212B3A';
   ctx.strokeStyle=`rgba(157,140,216,${nm?.35:.5})`;ctx.lineWidth=1;
-  ctx.beginPath();ctx.moveTo(-10,7);ctx.lineTo(-5,-9);ctx.lineTo(-1,1);
-  ctx.lineTo(5,-6);ctx.lineTo(11,7);ctx.closePath();ctx.fill();ctx.stroke();
+  ctx.beginPath();ctx.moveTo(-9,6);ctx.lineTo(-4,-8);ctx.lineTo(-1,1);
+  ctx.lineTo(4,-5);ctx.lineTo(10,6);ctx.closePath();ctx.fill();ctx.stroke();
   ctx.strokeStyle=`rgba(255,255,255,${nm?.1:.2})`;
-  ctx.beginPath();ctx.arc(0,9,8,Math.PI*.1,Math.PI*.9);ctx.stroke();
+  ctx.beginPath();ctx.arc(0,8,7,Math.PI*.1,Math.PI*.9);ctx.stroke();
   ctx.restore();
 }
 function drawHazChip(hz){
   const st=hazStatus(hz);
   const col=st==='wisp'?'#EFC97F':st==='light'?'#6FE7DC':'#E8708C';
-  const sym=st==='wisp'?'◆':st==='light'?'◐':'✕';
+  const sym=hz.kind==='sand'?(st==='light'?'◐':'✕'):
+    st==='wisp'?'◆':st==='light'?'◐':'✕';
   const y=hz.y-hexW()*1.0;
-  const p=dayPlan(state.day);let pulse=1;
+  const p=getPlan();let pulse=1;
   if(p.storm&&st!=='wisp'){
     const b=angN(Math.atan2(hz.y-CY,hz.x-CX)*180/Math.PI);
     if(angD(b,OCTA[(p.wind+4)%8])<=60)pulse=1+Math.sin(frame*.1)*.25;
   }
   ctx.save();ctx.translate(hz.x,y);
-  const sc=pulse/Math.max(.8,cam.z*.75);ctx.scale(sc,sc);
+  const sc=pulse/Math.max(.8,cam.z*.62);ctx.scale(sc,sc);
   ctx.fillStyle='rgba(5,9,18,.85)';ctx.strokeStyle=col;ctx.lineWidth=1.2;
-  ctx.beginPath();ctx.arc(0,0,11,0,7);ctx.fill();ctx.stroke();
-  ctx.fillStyle=col;ctx.font='12px system-ui';ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.beginPath();ctx.arc(0,0,10,0,7);ctx.fill();ctx.stroke();
+  ctx.fillStyle=col;ctx.font='11px system-ui';ctx.textAlign='center';ctx.textBaseline='middle';
   ctx.fillText(sym,0,.5);ctx.restore();ctx.textBaseline='alphabetic';
 }
 function drawCoverage(){
@@ -898,12 +1049,15 @@ function drawStructAt(s,wx,wy,ghost,nm){
   ctx.save();ctx.translate(wx,wy);
   if(ghost)ctx.globalAlpha=.55;
   else if(s.damaged)ctx.globalAlpha=.4;
-  const sc=.85+s.lvl*.18;ctx.scale(sc,sc);
+  const nHex=BUILD[s.type].hex[s.lvl-1];
+  const sc=(.62+nHex*.34)*(HS/17);
+  ctx.scale(sc,sc);
+  const armedDim=(s.type==='boje'||s.type==='nebelhorn')&&!s.armed?.35:1;
   switch(s.type){
     case 'destille':{
       ctx.strokeStyle=nm?'#4a5568':'#6B7A8E';ctx.lineWidth=3;
       ctx.beginPath();ctx.arc(0,0,10,0,7);ctx.stroke();
-      const pu=.6+Math.sin(frame*.06)*.25;
+      const pu=(.6+Math.sin(frame*.06)*.25);
       ctx.fillStyle=`rgba(111,231,220,${pu})`;
       ctx.shadowColor='#6FE7DC';ctx.shadowBlur=12;
       ctx.beginPath();ctx.arc(0,0,4.5,0,7);ctx.fill();ctx.shadowBlur=0;break}
@@ -911,11 +1065,11 @@ function drawStructAt(s,wx,wy,ghost,nm){
       ctx.strokeStyle=`rgba(111,231,220,${nm?.35:.55})`;ctx.lineWidth=1.4;
       for(const r0 of[5,9,13]){ctx.beginPath();ctx.arc(0,5,r0,Math.PI,0);ctx.stroke()}break;
     case 'boje':{
-      const pu=.55+Math.sin(frame*.09+wx)*.35;
-      ctx.shadowColor='#EFC97F';ctx.shadowBlur=16;
+      const pu=(.55+Math.sin(frame*.09+wx)*.35)*armedDim;
+      ctx.shadowColor='#EFC97F';ctx.shadowBlur=s.armed?16:0;
       ctx.fillStyle=`rgba(239,201,127,${pu})`;
       ctx.beginPath();ctx.arc(0,0,5.5,0,7);ctx.fill();ctx.shadowBlur=0;
-      ctx.strokeStyle='rgba(239,201,127,.3)';ctx.lineWidth=1;
+      ctx.strokeStyle=`rgba(239,201,127,${.3*armedDim})`;ctx.lineWidth=1;
       ctx.beginPath();ctx.arc(0,0,9+Math.sin(frame*.09+wx)*2,0,7);ctx.stroke();break}
     case 'wellenbrecher':
       ctx.fillStyle=nm?'#2E3A48':'#465668';
@@ -927,10 +1081,10 @@ function drawStructAt(s,wx,wy,ghost,nm){
         ctx.fillText(s.hp+'/'+[3,5][s.lvl-1],0,-11)}break;
     case 'nebelhorn':{
       ctx.fillStyle=nm?'#2A3442':'#3E4E60';
-      ctx.strokeStyle='rgba(157,140,216,.5)';ctx.lineWidth=1.2;
+      ctx.strokeStyle=`rgba(157,140,216,${.5*armedDim})`;ctx.lineWidth=1.2;
       ctx.beginPath();ctx.moveTo(-6,8);ctx.lineTo(-3,-9);ctx.lineTo(3,-9);ctx.lineTo(6,8);
       ctx.closePath();ctx.fill();ctx.stroke();
-      ctx.fillStyle=`rgba(157,140,216,${.4+Math.sin(frame*.05)*.3})`;
+      ctx.fillStyle=`rgba(157,140,216,${(.4+Math.sin(frame*.05)*.3)*armedDim})`;
       ctx.fillRect(-2,-5,4,9);break}
     case 'plattform':{
       ctx.fillStyle=nm?'#242E3C':'#37475A';
@@ -951,7 +1105,6 @@ function drawStructAt(s,wx,wy,ghost,nm){
   ctx.restore();
 }
 function drawStruct(s,sel,nm){
-  // Hex-Sockel
   for(const h of structHexes(s)){
     const p=h2w(h.q,h.r);
     hexPath(p.x,p.y,HS-2);
@@ -962,107 +1115,117 @@ function drawStruct(s,sel,nm){
   const c=structCenter(s);
   drawStructAt(s,c.x,c.y,false,nm);
   if(sel){
-    const pu=.5+Math.sin(frame*.08)*.3;
-    ctx.strokeStyle=`rgba(239,201,127,${pu})`;ctx.lineWidth=2;
-    ctx.beginPath();ctx.arc(c.x,c.y,HS*1.5,0,7);ctx.stroke();
+    ctx.strokeStyle=`rgba(239,201,127,${.5+Math.sin(frame*.08)*.3})`;ctx.lineWidth=2;
+    ctx.beginPath();ctx.arc(c.x,c.y,HS*1.9,0,7);ctx.stroke();
   }
 }
 function drawWreckM(w,nm){
   ctx.save();ctx.translate(w.x,w.y);ctx.rotate(.45);
   ctx.fillStyle=nm?'#242028':'#3A343E';
   ctx.strokeStyle='rgba(157,140,216,.35)';ctx.lineWidth=1;
-  ctx.beginPath();ctx.moveTo(-12,4);ctx.lineTo(-7,-5);ctx.lineTo(8,-5);ctx.lineTo(13,4);
+  ctx.beginPath();ctx.moveTo(-10,3);ctx.lineTo(-6,-4);ctx.lineTo(7,-4);ctx.lineTo(11,3);
   ctx.closePath();ctx.fill();ctx.stroke();ctx.restore();
   if(phase==='day'){
     ctx.strokeStyle=`rgba(239,201,127,${(.5+Math.sin(frame*.08)*.3)*.6})`;ctx.lineWidth=1;
-    ctx.beginPath();ctx.arc(w.x,w.y,13,0,7);ctx.stroke();
+    ctx.beginPath();ctx.arc(w.x,w.y,12,0,7);ctx.stroke();
   }
 }
 function drawBeacon(nm,sel){
-  // 7-Hex-Sockel
   for(const h of lhHexes){
     const p=h2w(h.q,h.r);
-    hexPath(p.x,p.y,HS-2);
-    ctx.fillStyle=nm?'rgba(30,38,50,.5)':'rgba(44,56,72,.45)';ctx.fill();
-    ctx.strokeStyle=sel?'rgba(239,201,127,.7)':`rgba(239,201,127,${.14+Math.sin(frame*.04)*.06})`;
+    hexPath(p.x,p.y,HS-1.5);
+    ctx.fillStyle=nm?'rgba(30,38,50,.55)':'rgba(44,56,72,.5)';ctx.fill();
+    ctx.strokeStyle=sel?'rgba(239,201,127,.7)':`rgba(239,201,127,${.16+Math.sin(frame*.04)*.07})`;
     ctx.lineWidth=1;ctx.stroke();
   }
-  const hT=3.6*hexW();
+  const hT=5.4*hexW();
   ctx.save();ctx.translate(CX,CY);
-  ctx.fillStyle='rgba(0,0,0,.28)';ctx.beginPath();ctx.ellipse(3,hT*.1,hexW()*1.15,hexW()*.42,0,0,7);ctx.fill();
-  const tg=ctx.createLinearGradient(0,-hT,0,hT*.1);
+  // Sockelplatte über alle 7 Hexes
+  ctx.fillStyle='rgba(0,0,0,.3)';
+  ctx.beginPath();ctx.ellipse(3,hexW()*.55,hexW()*1.75,hexW()*.85,0,0,7);ctx.fill();
+  ctx.strokeStyle='rgba(111,231,220,.28)';ctx.lineWidth=2;
+  ctx.beginPath();ctx.ellipse(0,hexW()*.5,hexW()*1.7,hexW()*.8,0,0,7);ctx.stroke();
+  const pu=.3+Math.sin(frame*.04)*.15;
+  ctx.strokeStyle=`rgba(239,201,127,${pu})`;ctx.lineWidth=1.5;
+  ctx.beginPath();ctx.ellipse(0,hexW()*.5,hexW()*1.45,hexW()*.66,0,0,7);ctx.stroke();
+  // Breiter Turm
+  const tg=ctx.createLinearGradient(0,-hT,0,hexW()*.5);
   tg.addColorStop(0,nm?'#E2DCCB':'#F6F1E4');tg.addColorStop(1,nm?'#6E6A5E':'#A9A392');
   ctx.fillStyle=tg;
-  ctx.beginPath();ctx.moveTo(-hexW()*.38,hT*.1);ctx.lineTo(-hexW()*.18,-hT*.8);
-  ctx.lineTo(hexW()*.18,-hT*.8);ctx.lineTo(hexW()*.38,hT*.1);ctx.closePath();ctx.fill();
-  ctx.strokeStyle=`rgba(111,231,220,${.35+Math.sin(frame*.05)*.15})`;ctx.lineWidth=1.4;
-  ctx.beginPath();ctx.moveTo(0,hT*.06);ctx.lineTo(0,-hT*.76);ctx.stroke();
-  for(const fy of[-.25,-.5]){
-    ctx.beginPath();ctx.moveTo(-hexW()*.27*(1+fy*.5),hT*fy);ctx.lineTo(hexW()*.27*(1+fy*.5),hT*fy);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(-hexW()*.72,hexW()*.5);ctx.lineTo(-hexW()*.3,-hT*.78);
+  ctx.lineTo(hexW()*.3,-hT*.78);ctx.lineTo(hexW()*.72,hexW()*.5);ctx.closePath();ctx.fill();
+  ctx.strokeStyle=`rgba(111,231,220,${.35+Math.sin(frame*.05)*.15})`;ctx.lineWidth=1.6;
+  ctx.beginPath();ctx.moveTo(0,hexW()*.4);ctx.lineTo(0,-hT*.74);ctx.stroke();
+  for(const fy of[-.22,-.46]){
+    ctx.beginPath();ctx.moveTo(-hexW()*.48*(1+fy*.6),hT*fy);ctx.lineTo(hexW()*.48*(1+fy*.6),hT*fy);ctx.stroke();
   }
   ctx.fillStyle=nm?'#4a5568':'#5E6E80';
-  ctx.fillRect(-hexW()*.27,-hT*.88,hexW()*.54,hT*.09);
-  const lit=!nm||!night||!night.oilOut;
-  ctx.shadowColor=lit?'#EFC97F':'transparent';ctx.shadowBlur=lit?26:0;
-  ctx.fillStyle=lit?'#FFE2A8':'#3A4450';
-  ctx.beginPath();ctx.arc(0,-hT*.95,hexW()*.15,0,7);ctx.fill();ctx.shadowBlur=0;
-  if(lit){
-    ctx.fillStyle=`rgba(239,201,127,${.2+Math.sin(frame*.05)*.1})`;
-    ctx.beginPath();ctx.arc(0,-hT*.95,hexW()*.38,0,7);ctx.fill();
-    for(let k=0;k<3;k++){
-      const a=frame*.02+k*2.1;
-      ctx.fillStyle='rgba(255,224,160,.8)';
-      ctx.beginPath();ctx.arc(Math.cos(a)*hexW()*.5,-hT*.95+Math.sin(a)*hexW()*.18,2.2,0,7);ctx.fill();
-    }
+  ctx.fillRect(-hexW()*.42,-hT*.86,hexW()*.84,hT*.09);
+  ctx.shadowColor='#EFC97F';ctx.shadowBlur=28;
+  ctx.fillStyle='#FFE2A8';
+  ctx.beginPath();ctx.arc(0,-hT*.93,hexW()*.2,0,7);ctx.fill();ctx.shadowBlur=0;
+  ctx.fillStyle=`rgba(239,201,127,${.2+Math.sin(frame*.05)*.1})`;
+  ctx.beginPath();ctx.arc(0,-hT*.93,hexW()*.5,0,7);ctx.fill();
+  for(let k=0;k<3;k++){
+    const a=frame*.02+k*2.1;
+    ctx.fillStyle='rgba(255,224,160,.8)';
+    ctx.beginPath();ctx.arc(Math.cos(a)*hexW()*.62,-hT*.93+Math.sin(a)*hexW()*.22,2.4,0,7);ctx.fill();
   }
   ctx.fillStyle=nm?'#8A8478':'#C4BCA8';
-  ctx.beginPath();ctx.moveTo(-hexW()*.18,-hT*.88);ctx.lineTo(0,-hT*1.1);ctx.lineTo(hexW()*.18,-hT*.88);
+  ctx.beginPath();ctx.moveTo(-hexW()*.28,-hT*.86);ctx.lineTo(0,-hT*1.08);ctx.lineTo(hexW()*.28,-hT*.86);
   ctx.closePath();ctx.fill();
   ctx.restore();
+}
+function beamWedge(a,w,rg,alpha){
+  const x=CX,y=CY-3.2*hexW();
+  const grd=ctx.createRadialGradient(x,y,8,x,y,rg);
+  grd.addColorStop(0,`rgba(255,224,160,${alpha})`);grd.addColorStop(1,'rgba(239,201,127,0)');
+  ctx.fillStyle=grd;ctx.beginPath();ctx.moveTo(x,y);
+  ctx.arc(x,y,rg,a-w,a+w);ctx.closePath();ctx.fill();
 }
 function drawShip(sh){
   const wp=sh.wps[Math.min(sh.wi,sh.wps.length-1)];
   const ang=Math.atan2(wp.y-sh.y,wp.x-sh.x);
   ctx.strokeStyle='rgba(111,231,220,.2)';ctx.lineWidth=2;
-  ctx.beginPath();ctx.moveTo(sh.x-Math.cos(ang)*13,sh.y-Math.sin(ang)*13);
-  ctx.lineTo(sh.x-Math.cos(ang)*32,sh.y-Math.sin(ang)*32);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(sh.x-Math.cos(ang)*11,sh.y-Math.sin(ang)*11);
+  ctx.lineTo(sh.x-Math.cos(ang)*26,sh.y-Math.sin(ang)*26);ctx.stroke();
   ctx.save();ctx.translate(sh.x,sh.y);ctx.rotate(ang);
-  if(sh.lit){ctx.shadowColor='#EFC97F';ctx.shadowBlur=14}
+  if(sh.lit){ctx.shadowColor='#EFC97F';ctx.shadowBlur=12}
   ctx.fillStyle=sh.lit?'#E8DFC8':'#8A94A4';
-  ctx.beginPath();ctx.moveTo(14,0);ctx.quadraticCurveTo(6,-5.5,-9,-4);
-  ctx.lineTo(-9,4);ctx.quadraticCurveTo(6,5.5,14,0);ctx.closePath();ctx.fill();
+  ctx.beginPath();ctx.moveTo(11,0);ctx.quadraticCurveTo(5,-4.5,-7,-3.2);
+  ctx.lineTo(-7,3.2);ctx.quadraticCurveTo(5,4.5,11,0);ctx.closePath();ctx.fill();
   ctx.shadowBlur=0;
-  const sg=ctx.createLinearGradient(0,-15,0,0);
+  const sg=ctx.createLinearGradient(0,-12,0,0);
   sg.addColorStop(0,`rgba(111,231,220,${sh.lit?.75:.4})`);
   sg.addColorStop(1,'rgba(111,231,220,.05)');
   ctx.fillStyle=sg;
-  ctx.beginPath();ctx.moveTo(-2,-1);ctx.lineTo(-2,-16);ctx.quadraticCurveTo(8,-10,-2,-1);
+  ctx.beginPath();ctx.moveTo(-1.5,-1);ctx.lineTo(-1.5,-13);ctx.quadraticCurveTo(6.5,-8,-1.5,-1);
   ctx.closePath();ctx.fill();ctx.restore();
-  if(sh.lit){ctx.fillStyle='rgba(233,238,244,.9)';ctx.font='11px Georgia,serif';
-    ctx.textAlign='center';ctx.fillText('‚'+sh.name+'’',sh.x,sh.y-21)}
+  if(sh.lit){ctx.fillStyle='rgba(233,238,244,.9)';ctx.font='10px Georgia,serif';
+    ctx.textAlign='center';ctx.fillText('‚'+sh.name+'’',sh.x,sh.y-17)}
   const inDanger=!sh.lit&&nearHazard(sh.x,sh.y,1.9*hexW())&&!shipGuided(sh);
   if(inDanger&&Math.floor(frame/14)%2===0){
-    ctx.fillStyle='#E8708C';ctx.font='bold 15px system-ui';ctx.textAlign='center';
-    ctx.fillText('!',sh.x,sh.y-15)}
+    ctx.fillStyle='#E8708C';ctx.font='bold 13px system-ui';ctx.textAlign='center';
+    ctx.fillText('!',sh.x,sh.y-13)}
 }
 function drawFog(){
   for(const o of night.plan.fog){
     const a=OCTA[o]*Math.PI/180;
     const px=CX+Math.cos(a)*terrRX()*.7,py=CY+Math.sin(a)*terrRY()*.7;
     for(let i=0;i<4;i++){
-      const fx=px+Math.sin(frame*.006+i*2.4)*35,fy=py+Math.cos(frame*.005+i*1.9)*24;
-      const fg=ctx.createRadialGradient(fx,fy,10,fx,fy,115+i*24);
+      const fx=px+Math.sin(frame*.006+i*2.4)*30,fy=py+Math.cos(frame*.005+i*1.9)*20;
+      const fg=ctx.createRadialGradient(fx,fy,10,fx,fy,95+i*20);
       fg.addColorStop(0,'rgba(140,152,170,.17)');fg.addColorStop(1,'rgba(140,152,170,0)');
-      ctx.fillStyle=fg;ctx.beginPath();ctx.arc(fx,fy,115+i*24,0,7);ctx.fill();
+      ctx.fillStyle=fg;ctx.beginPath();ctx.arc(fx,fy,95+i*20,0,7);ctx.fill();
     }}
 }
 function drawRain(){
   const p=night.plan;const wa=(OCTA[p.wind]+180)*Math.PI/180;
-  const dx=Math.cos(wa)*11,dy=Math.sin(wa)*11;
+  const dx=Math.cos(wa)*9,dy=Math.sin(wa)*9;
   ctx.strokeStyle='rgba(150,190,220,.16)';ctx.lineWidth=1;
   for(let i=0;i<60*p.storm;i++){
-    const x=CX-terrRX()+((i*127+frame*7)%(terrRX()*2+160))-80,
-      y=CY-terrRY()+((i*83+frame*11)%(terrRY()*2+80));
+    const x=CX-terrRX()+((i*127+frame*6)%(terrRX()*2+140))-70,
+      y=CY-terrRY()+((i*83+frame*9)%(terrRY()*2+70));
     ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x+dx,y+dy);ctx.stroke();
   }
 }
@@ -1073,15 +1236,15 @@ function drawPlacement(){
   for(const h of hexRange()){
     if(!placeOk(type,lvl,h.q,h.r,except))continue;
     const p=h2w(h.q,h.r);
-    hexPath(p.x,p.y,HS-3);
-    ctx.fillStyle=`rgba(111,231,220,${.08+Math.sin(frame*.06+h.q+h.r)*.03})`;ctx.fill();
+    hexPath(p.x,p.y,HS-2.5);
+    ctx.fillStyle=`rgba(111,231,220,${.09+Math.sin(frame*.06+h.q+h.r)*.03})`;ctx.fill();
     ctx.strokeStyle='rgba(111,231,220,.35)';ctx.lineWidth=1;ctx.stroke();
   }
   if(hoverHex){
     const ok=placeOk(type,lvl,hoverHex.q,hoverHex.r,except);
     for(const h of fpHexes(type,lvl,hoverHex.q,hoverHex.r)){
       const p=h2w(h.q,h.r);
-      hexPath(p.x,p.y,HS-2);
+      hexPath(p.x,p.y,HS-1.5);
       ctx.strokeStyle=ok?'rgba(111,231,220,.9)':'rgba(232,112,140,.9)';
       ctx.lineWidth=2;ctx.stroke();
     }
@@ -1091,23 +1254,25 @@ function drawPlacement(){
     }
   }
   if(type==='boje'){
-    for(const hz of hazards())if(!hazBuoyed(hz)){
+    const p=getPlan();
+    for(const hz of hazards(p))if(hz.buoyable&&!hazBuoyed(hz)){
       ctx.strokeStyle='rgba(239,201,127,.3)';ctx.setLineDash([4,6]);ctx.lineWidth=1;
-      ctx.beginPath();ctx.arc(hz.x,hz.y,2.4*hexW(),0,7);ctx.stroke();ctx.setLineDash([]);
+      ctx.beginPath();ctx.arc(hz.x,hz.y,2.6*hexW(),0,7);ctx.stroke();ctx.setLineDash([]);
     }}
 }
 
-/* ═══════════ UI: Chips & Leisten ═══════════ */
+/* ═══════════ UI ═══════════ */
 function renderTop(){
-  $('gOil').textContent=fmt(state.oil);
-  const per=oilPerNight();
-  const sub=$('gOilSub');sub.textContent=`−${fmt(per)}`;
-  sub.className='s'+(per>state.oil?' warn':'');
-  $('gWood').textContent=fmt(state.wood);
-  $('gCoins').textContent=fmt(state.coins);
-  $('gLvl').textContent='Stufe '+state.level;
+  const cap=oilCap(),used=oilUsed();
+  $('gOil').textContent=`${fmt(used)}/${fmt(cap)}`;
+  $('oilFill').style.width=clamp(used/cap*100,0,100)+'%';
+  $('gWood').textContent=`${fmt(state.wood)}/${woodCap()}`;
+  $('woodFill').style.width=clamp(state.wood/woodCap()*100,0,100)+'%';
+  $('gCoins').textContent=`${fmt(state.coins)}/${coinCap()}`;
+  $('coinFill').style.width=clamp(state.coins/coinCap()*100,0,100)+'%';
+  $('gLvl').textContent=state.level;
   const prev=xpNeed(state.level-1),need=xpNeed(state.level);
-  $('gXp').textContent=`${state.xp-prev}/${need-prev}`;
+  $('gXp').textContent=`${state.xp-prev}/${need-prev} XP`;
   $('xpFill').style.width=clamp((state.xp-prev)/(need-prev)*100,0,100)+'%';
   $('dayChip').textContent='Nacht '+state.day;
 }
@@ -1119,159 +1284,169 @@ function setDayMode(m){
 }
 function renderBars(){
   renderTop();
-  const bar=$('bottomBar'),ab=$('actionBar');
-  if(phase!=='day'){bar.innerHTML='';ab.style.display='none';return}
-  if(selS!==null){bar.innerHTML='';renderActionBar();return}
-  ab.style.display='none';
+  const bar=$('bottomBar'),ai=$('actIcons');
+  if(phase!=='day'){bar.innerHTML='';ai.style.display='none';return}
+  if(selS!==null){bar.innerHTML='';renderActIcons();return}
+  ai.style.display='none';
+  bar.innerHTML='';
   if(moveIdx!==null){
-    bar.innerHTML=`<div class="planChip notch"><div class="t">Verschieben</div>
+    bar.innerHTML=`<div class="planChip notch"><div class="t">✥ Verschieben</div>
       <div class="d">Tippe ein freies Zielfeld.</div>
       <button class="abtn" id="mvCancel">Abbrechen</button></div>`;
     $('mvCancel').onclick=()=>{moveIdx=null;renderBars()};
     return;
   }
   if(dayMode==='bau'){
-    bar.innerHTML='';
     for(const[key,b]of Object.entries(BUILD)){
       const card=document.createElement('div');
       const afford=state.wood>=b.build;
       card.className='shopCard notch'+(shopSel===key?' on':'')+(afford?'':' dis');
-      card.innerHTML=`<div class="ic">${b.ic}</div><div class="n">${b.n}</div>
-        <div class="d">${b.eff(1)}</div><div class="c">${b.build} ▤ · ${b.hex[0]} Hex</div>`;
+      card.title=b.n;
+      card.innerHTML=`<div class="ic">${b.ic}</div><div class="c">${b.build}▤ · ${b.hex[0]}⬢</div>`;
       card.onclick=()=>{if(!afford)return;
-        shopSel=shopSel===key?null:key;renderBars()};
+        shopSel=shopSel===key?null:key;renderBars();
+        if(shopSel)toast(`<b>${b.n}</b>`,b.eff(1)+' — tippe ein leuchtendes Hex.')};
       bar.appendChild(card);
     }
     const lock=document.createElement('div');
-    lock.className='shopCard notch lock';
-    lock.innerHTML=`<div class="ic">⚖</div><div class="n">Handelshaus</div>
-      <div class="d">Schiffe legen an &amp; handeln</div><div class="c">🔒 ab Stufe 5</div>`;
+    lock.className='shopCard notch lock';lock.title='Handelshaus — ab Stufe 5';
+    lock.innerHTML=`<div class="ic">⚖</div><div class="c">🔒 St. 5</div>`;
     bar.appendChild(lock);
-    if(shopSel){
-      const hint=document.createElement('div');
-      hint.className='planChip notch';
-      hint.innerHTML=`<div class="t">${BUILD[shopSel].n}</div>
-        <div class="d">Tippe ein leuchtendes Hex zum Bauen.</div>`;
-      bar.prepend(hint);
-    }
   }else{
-    bar.innerHTML='';
-    // Vorhersage-Chip
     const fc=forecastShort();
     const f=document.createElement('div');f.className='planChip notch';
-    f.innerHTML=`<div class="t">☾ ${fc.t}</div><div class="d">${fc.w}</div>`;
+    f.innerHTML=`<div class="t">☾ ${fc.lines[0]}</div>
+      <div class="d">${fc.lines.slice(1).join(' · ')}<br>
+      <span style="color:var(--gold)">◆${fc.stats.wisp}</span>
+      <span style="color:var(--soul)">◐${fc.stats.light}</span>
+      <span class="warn">✕${fc.stats.open}</span></div>`;
     bar.appendChild(f);
-    // Licht-Chip
+    const used=oilUsed(),cap=oilCap();
     const l=document.createElement('div');l.className='planChip notch';
     const modeTxt=state.lh.mode==='rot'?'Rotieren':'Fokus '+OCT[state.lh.fokusOct];
-    l.innerHTML=`<div class="t">☼ Licht: ${modeTxt}</div>
-      <div class="d">verbrennt ≈ <b>${fmt(oilPerNight())} Öl</b>/Nacht</div>
-      <button class="abtn" id="lightBtn">${state.lh.mode==='rot'?'Auf Fokus stellen':'Auf Rotieren stellen'}</button>`;
+    l.innerHTML=`<div class="t">◔ ${fmt(used)}/${fmt(cap)} Öl · ${modeTxt}</div>
+      <div class="d">Bojen antippen = scharf/aus für die Nacht</div>
+      <button class="abtn" id="lightBtn">${state.lh.mode==='rot'?'→ Fokus':'→ Rotieren'}</button>`;
     bar.appendChild(l);
     l.querySelector('#lightBtn').onclick=e=>{e.stopPropagation();
       state.lh.mode=state.lh.mode==='rot'?'fok':'rot';save();renderBars();
-      if(state.lh.mode==='fok')toast('<b>Fokus-Modus:</b> Tippe aufs Wasser, um die Richtung zu wählen.')};
-    // Notfeuer
-    if(state.oil<oilPerNight()){
-      const nf=document.createElement('div');nf.className='planChip notch';
-      nf.innerHTML=`<div class="t warn" style="color:var(--rose)">⚠ Öl knapp!</div>
-        <button class="abtn gold" id="nfBtn" ${state.wood<20?'disabled':''}>Notfeuer: 20 ▤ → 12 Öl</button>`;
-      bar.appendChild(nf);
-      nf.querySelector('#nfBtn').onclick=e=>{e.stopPropagation();
-        if(state.wood<20)return;state.wood-=20;state.oil+=12;save();renderBars()};
-    }
-    // Schiffe
+      if(state.lh.mode==='fok')toast('<b>Fokus:</b> Tippe aufs Wasser, um die Richtung zu wählen.')};
     if(state.tonight)state.tonight.forEach((sh,i)=>{
       const c=document.createElement('div');
       c.className='planChip notch'+(selShip===i?' on':'');
       const hh=String(Math.floor(sh.spawn)%24).padStart(2,'0'),
         mm=String(Math.floor(sh.spawn%1*60)).padStart(2,'0');
       c.innerHTML=`<div class="t">⛵ ‚${sh.name}'</div>
-        <div class="d">${sh.type} · ab ${hh}:${mm}${selShip===i?
-        `<br>${sh.cargo} · ${sh.crew} Mann · ~${sh.dwell.toFixed(1)}h<br>Zoll: <b>${sh.toll} ⬡</b>${sh.close?'<br><span class="warn">fährt dicht an den Riffen!</span>':''}`:''}</div>`;
+        <div class="d">${sh.type} · ${hh}:${mm}${selShip===i?
+        `<br>${sh.cargo} · ${sh.crew} Mann · ~${sh.dwell.toFixed(1)}h · Zoll <b>${sh.toll}⬡</b>${sh.close?'<br><span class="warn">fährt dicht an den Gefahren!</span>':''}`:''}</div>`;
       c.onclick=()=>{selShip=selShip===i?null:i;renderBars()};
       bar.appendChild(c);
     });
-    // Wracks
     state.wrecks.forEach((w,i)=>{
       const c=document.createElement('div');c.className='planChip notch';
-      c.innerHTML=`<div class="t">⚓ Wrack ‚${w.name}'</div>
-        <div class="d">+${w.loot.w} ▤ · +${w.loot.coins} ⬡ · +${w.loot.oil} Öl</div>
+      c.innerHTML=`<div class="t">⚓ ‚${w.name}'</div>
+        <div class="d">+${w.loot.w}▤ +${w.loot.coins}⬡</div>
         <button class="abtn gold">Bergen</button>`;
       c.querySelector('button').onclick=e=>{e.stopPropagation();
-        state.wood+=w.loot.w;state.coins+=w.loot.coins;state.oil+=w.loot.oil;
+        state.wood=Math.min(woodCap(),state.wood+w.loot.w);
+        state.coins=Math.min(coinCap(),state.coins+w.loot.coins);
         state.wrecks.splice(i,1);save();renderBars();
         toast(`Wrack der ‚${w.name}' geborgen.`)};
       bar.appendChild(c);
     });
   }
 }
-function renderActionBar(){
-  const ab=$('actionBar');ab.style.display='flex';
-  $('infoPop').style.display='none';
-  const B=$('abBtns');B.innerHTML='';
+function renderActIcons(){
+  const ai=$('actIcons');ai.style.display='flex';
+  const row=$('actRow');row.innerHTML='';
+  const mkBtn=(icon,label,cls,fn,dis)=>{
+    const b=document.createElement('button');b.className='actB '+(cls||'');
+    b.innerHTML=`${icon}<span>${label}</span>`;b.disabled=!!dis;
+    b.onclick=fn;row.appendChild(b);return b;
+  };
   if(selS==='lh'){
-    $('abName').textContent='Das Leuchtfeuer';
-    $('abLvl').textContent='7 HEX';
-    $('abEff').innerHTML=`Reichweite <b>${LINSE[state.lh.linse-1].rng} Hexes</b> · Umlauf ${UHRW[state.lh.uhrwerk-1]} min · ${BRENN[state.lh.brennkammer-1]} Öl/h`;
-    [['linse','Linse',l=>LINSE[l-1].rng+' Hex'],
-     ['uhrwerk','Uhrwerk',l=>UHRW[l-1]+' min'],
-     ['brennkammer','Brennkammer',l=>BRENN[l-1]+' Öl/h']].forEach(([key,nm,ef])=>{
-      const lv=state.lh[key];
-      const b=document.createElement('button');b.className='abtn gold';
-      if(lv>=3){b.textContent=`${nm} MAX`;b.disabled=true}
-      else{const cost=LH_UP[key][lv-1];
-        b.textContent=`${nm} ${lv}→${lv+1} (${ef(lv+1)}) · ${cost} ⬡`;
-        b.disabled=state.coins<cost;
-        b.onclick=()=>{state.coins-=cost;state.lh[key]++;save();renderActionBar();renderTop()}}
-      B.appendChild(b);
-    });
-    const close=document.createElement('button');close.className='abtn';close.textContent='Schließen';
-    close.onclick=()=>{selS=null;renderBars()};
-    B.appendChild(close);
+    $('actName').innerHTML=`Leuchtfeuer · <b>7 Hex</b>`;
+    mkBtn('ⓘ','Info','',()=>openBuildPanel('lh'));
+    mkBtn('✕','Zu','',()=>{selS=null;renderBars()});
     return;
   }
   const s=state.structures[selS],b=BUILD[s.type];
-  $('abName').textContent=b.n;
-  $('abLvl').textContent=`STUFE ${s.lvl} · ${b.hex[s.lvl-1]} HEX`;
-  $('abEff').innerHTML='Jetzt: <b>'+b.eff(s.lvl)+'</b>';
-  const info=document.createElement('button');info.className='abtn';info.textContent='ⓘ Info';
-  info.onclick=()=>{const ip=$('infoPop');
-    ip.style.display=ip.style.display==='none'?'block':'none';
-    ip.innerHTML=b.info+(s.lvl<b.maxL?`<br>Stufe ${s.lvl+1}: <b>${b.eff(s.lvl+1)}</b> · braucht ${b.hex[s.lvl]} Hex`:'')};
-  B.appendChild(info);
-  const maxHp=s.type==='wellenbrecher'?[3,5][s.lvl-1]:null;
-  const broken=s.damaged||(maxHp!==null&&s.hp<maxHp);
-  if(broken){
-    const cost=maxHp!==null?(maxHp-s.hp)*15:25;
-    const rb=document.createElement('button');rb.className='abtn gold';
-    rb.textContent=`Reparieren · ${cost} ▤`;rb.disabled=state.wood<cost;
-    rb.onclick=()=>{state.wood-=cost;if(maxHp!==null)s.hp=maxHp;s.damaged=false;
-      save();renderActionBar();renderTop()};
-    B.appendChild(rb);
+  $('actName').innerHTML=`${b.n} · <b>St. ${s.lvl}</b>`;
+  mkBtn('ⓘ','Info','',()=>openBuildPanel(selS));
+  if(s.lvl<b.maxL){
+    const fits=placeOk(s.type,s.lvl+1,s.q,s.r,s);
+    mkBtn('⬆','Ausbau','gold',()=>openBuildPanel(selS),
+      state.coins<b.up[s.lvl-1]&&!fits?false:false);
   }
+  if(s.type==='boje'||s.type==='nebelhorn'){
+    const over=!s.armed&&oilUsed()+2>oilCap();
+    mkBtn(s.armed?'◉':'○',s.armed?'scharf':'aus',s.armed?'gold':'off',()=>{
+      if(!s.armed&&oilUsed()+2>oilCap()){toast('Nicht genug Öl-Budget für diese Nacht.');return}
+      s.armed=!s.armed;save();renderActIcons();renderTop();
+    },false);
+  }
+  const maxHp=s.type==='wellenbrecher'?[3,5][s.lvl-1]:null;
+  if(s.damaged||(maxHp!==null&&s.hp<maxHp)){
+    const cost=maxHp!==null?(maxHp-s.hp)*15:25;
+    mkBtn('🔧','Rep. '+cost,'gold',()=>{
+      if(state.wood<cost)return;
+      state.wood-=cost;if(maxHp!==null)s.hp=maxHp;s.damaged=false;
+      save();renderActIcons();renderTop();
+    },state.wood<cost);
+  }
+  mkBtn('✥','Bewegen','',()=>{moveIdx=selS;selS=null;renderBars()});
+  mkBtn('🗑','+'+Math.round(b.build*.5)+'▤','',()=>{
+    state.wood=Math.min(woodCap(),state.wood+Math.round(b.build*.5));
+    state.structures.splice(selS,1);selS=null;save();renderBars();
+  });
+  mkBtn('✕','Zu','',()=>{selS=null;renderBars()});
+}
+/* CoC-Style Gebäude-Panel */
+function openBuildPanel(sel){
+  const card=$('buildCard');
+  if(sel==='lh'){
+    let h=`<h2 class="serif">Das Leuchtfeuer</h2>
+    <div class="sub">Herz der Insel · 7 Hexes · Ausbau kostet Dukaten</div>`;
+    [['linse','Linse',l=>LINSE[l-1].rng+' Hex Reichweite'],
+     ['uhrwerk','Uhrwerk',l=>UHRW[l-1]+' min Umlauf'],
+     ['brennkammer','Brennkammer',l=>BRENN[l-1]+' ◔ Verbrauch']].forEach(([key,nm,ef])=>{
+      const lv=state.lh[key];
+      h+=`<div class="statRow"><span>${nm} <span style="color:var(--gold);font-size:10px">ST. ${lv}</span><br>
+        <small style="color:var(--faint)">${ef(lv)}${lv<3?' → <span class="nx">'+ef(lv+1)+'</span>':''}</small></span>`;
+      if(lv<3){const cost=LH_UP[key][lv-1];
+        h+=`<button class="abtn gold" data-lhup="${key}" ${state.coins<cost?'disabled':''}>${cost} ⬡</button>`}
+      else h+=`<span style="color:var(--faint);font-size:11px">MAX</span>`;
+      h+=`</div>`;
+    });
+    h+=`<button class="mbtn ghost" onclick="document.getElementById('buildModal').classList.remove('show')">Schließen</button>`;
+    card.innerHTML=h;
+    card.querySelectorAll('[data-lhup]').forEach(b=>b.onclick=()=>{
+      const k=b.dataset.lhup,cost=LH_UP[k][state.lh[k]-1];
+      state.coins-=cost;state.lh[k]++;save();renderTop();openBuildPanel('lh')});
+    $('buildModal').classList.add('show');
+    return;
+  }
+  const s=state.structures[sel],b=BUILD[s.type];
+  let h=`<h2 class="serif">${b.ic} ${b.n}</h2>
+  <div class="sub">Stufe ${s.lvl} von ${b.maxL} · ${b.hex[s.lvl-1]} Hex${b.hex[s.lvl-1]>1?'es':''}</div>
+  <div class="log">${b.info}</div>
+  <div class="statRow"><span>Jetzt</span><span>${b.eff(s.lvl)}</span></div>`;
   if(s.lvl<b.maxL){
     const cost=b.up[s.lvl-1];
     const fits=placeOk(s.type,s.lvl+1,s.q,s.r,s);
-    const ub=document.createElement('button');ub.className='abtn gold';
-    ub.textContent=`Ausbauen · ${cost} ⬡`+(fits?'':' (kein Platz)');
-    ub.disabled=state.coins<cost||!fits;
-    ub.onclick=()=>{state.coins-=cost;s.lvl++;
-      if(s.type==='wellenbrecher')s.hp=[3,5][s.lvl-1];
-      save();renderActionBar();renderTop()};
-    B.appendChild(ub);
-  }
-  const mv=document.createElement('button');mv.className='abtn';mv.textContent='✥ Verschieben';
-  mv.onclick=()=>{moveIdx=selS;selS=null;renderBars()};
-  B.appendChild(mv);
-  const del=document.createElement('button');del.className='abtn';
-  del.textContent=`Abreißen (+${Math.round(b.build*.5)} ▤)`;
-  del.onclick=()=>{state.wood+=Math.round(b.build*.5);
-    state.structures.splice(selS,1);selS=null;save();renderBars()};
-  B.appendChild(del);
-  const close=document.createElement('button');close.className='abtn';close.textContent='✕';
-  close.onclick=()=>{selS=null;renderBars()};
-  B.appendChild(close);
+    h+=`<div class="statRow"><span>Stufe ${s.lvl+1}</span><span class="nx">${b.eff(s.lvl+1)}</span></div>
+    <div class="statRow"><span>Fläche danach</span><span class="nx">${b.hex[s.lvl]} Hex${b.hex[s.lvl]>1?'es':''}${fits?'':' — <span style="color:var(--rose)">kein Platz hier!</span>'}</span></div>
+    <button class="mbtn" id="doUpgrade" ${state.coins<cost||!fits?'disabled':''}>Ausbauen · ${cost} ⬡</button>`;
+  }else h+=`<div class="statRow"><span></span><span style="color:var(--faint)">Vollendet</span></div>`;
+  h+=`<button class="mbtn ghost" onclick="document.getElementById('buildModal').classList.remove('show')">Schließen</button>`;
+  card.innerHTML=h;
+  const ub=card.querySelector('#doUpgrade');
+  if(ub)ub.onclick=()=>{
+    state.coins-=b.up[s.lvl-1];s.lvl++;
+    if(s.type==='wellenbrecher')s.hp=[3,5][s.lvl-1];
+    save();renderTop();openBuildPanel(sel);renderActIcons();
+  };
+  $('buildModal').classList.add('show');
 }
 function renderTicker(){
   const el=$('ticker');if(!night)return;
@@ -1317,7 +1492,7 @@ cv.addEventListener('pointermove',ev=>{
       p.x=ev.clientX;p.y=ev.clientY;
       const[a,b]=[...pointers.values()];
       const d=Math.hypot(a.x-b.x,a.y-b.y);
-      if(pinchD0>0)camT.z=clamp(pinchZ0*d/pinchD0,.35,3.2);
+      if(pinchD0>0)camT.z=clamp(pinchZ0*d/pinchD0,.3,3.6);
       dragMoved=true;
     }else{
       const dx=ev.clientX-p.x,dy=ev.clientY-p.y;
@@ -1340,14 +1515,17 @@ function endPointer(ev){
 }
 cv.addEventListener('pointerup',endPointer);
 cv.addEventListener('pointercancel',ev=>pointers.delete(ev.pointerId));
+function structAtHex(key){
+  for(let i=0;i<state.structures.length;i++)
+    if(structHexes(state.structures[i]).some(h=>hk(h.q,h.r)===key))return i;
+  return null;
+}
 function handleTap(wx,wy){
   if(phase!=='day')return;
   const h=w2h(wx,wy),key=hk(h.q,h.r);
   if(moveIdx!==null){
     const s=state.structures[moveIdx];
-    if(placeOk(s.type,s.lvl,h.q,h.r,s)){
-      s.q=h.q;s.r=h.r;moveIdx=null;save();renderBars();
-    }
+    if(placeOk(s.type,s.lvl,h.q,h.r,s)){s.q=h.q;s.r=h.r;moveIdx=null;save();renderBars()}
     return;
   }
   if(dayMode==='bau'){
@@ -1361,33 +1539,41 @@ function handleTap(wx,wy){
       state.wood-=b.build;
       const s={type:shopSel,q:tq,r:tr,lvl:1,damaged:false};
       if(shopSel==='wellenbrecher')s.hp=3;
+      if(shopSel==='boje'||shopSel==='nebelhorn')
+        s.armed=oilUsed()+2<=oilCap();
       state.structures.push(s);
       if(shopSel!=='boje')shopSel=null;
       save();renderBars();return;
     }
     if(lhHexSet.has(key)){selS='lh';renderBars();return}
-    selS=null;
-    for(let i=0;i<state.structures.length;i++){
-      if(structHexes(state.structures[i]).some(hh2=>hk(hh2.q,hh2.r)===key)){selS=i;break}
-    }
-    renderBars();return;
+    const idx=structAtHex(key);
+    selS=idx;renderBars();return;
   }
-  // Plan-Modus
+  // Plan: Boje/Horn antippen = scharf/aus (das nächtliche Ritual)
+  const idx=structAtHex(key);
+  if(idx!==null){
+    const s=state.structures[idx];
+    if(s.type==='boje'||s.type==='nebelhorn'){
+      if(!s.armed&&oilUsed()+2>oilCap()){toast('Nicht genug Öl-Budget für diese Nacht.');return}
+      s.armed=!s.armed;save();renderBars();
+      return;
+    }
+  }
   if(lhHexSet.has(key)){selS='lh';renderBars();return}
   for(let i=0;i<state.wrecks.length;i++){
     const w=state.wrecks[i];
     if(dist(wx,wy,w.x,w.y)<hexW()){
-      state.wood+=w.loot.w;state.coins+=w.loot.coins;state.oil+=w.loot.oil;
-      toast(`Wrack der ‚${w.name}' geborgen.`,`+${w.loot.w} ▤, +${w.loot.coins} ⬡, +${w.loot.oil} Öl`);
+      state.wood=Math.min(woodCap(),state.wood+w.loot.w);
+      state.coins=Math.min(coinCap(),state.coins+w.loot.coins);
+      toast(`Wrack der ‚${w.name}' geborgen.`,`+${w.loot.w}▤ +${w.loot.coins}⬡`);
       state.wrecks.splice(i,1);save();renderBars();return;
     }}
   if(state.tonight){
-    let best=null,bd=hexW()*1.2;
+    let best=null,bd=hexW()*1.3;
     state.tonight.forEach((sh,i)=>{
       for(const p of sh.wps){const d=dist(wx,wy,p.x,p.y);if(d<bd){bd=d;best=i}}});
     if(best!==null){selShip=selShip===best?null:best;renderBars();return}
   }
-  // Fokus-Richtung per Tap aufs Wasser
   if(state.lh.mode==='fok'&&shoreFactor(wx,wy)>1.1){
     state.lh.fokusOct=oct(wx,wy);save();renderBars();
     toast(`Fokus auf <b>${OCT[state.lh.fokusOct]}</b> gerichtet.`);
@@ -1403,33 +1589,28 @@ function toast(txt,sub){
   setTimeout(()=>el.remove(),10000);
 }
 const TUT=[
-  ['Willkommen, Wärter.','Dein <b>Leuchtturm</b> wacht über dieses Gewässer. Ziehe die Karte, kneife zum Zoomen. Unten rechts: <b>⚓ Plan</b> / <b>⚒ Bau</b>.'],
-  ['Plan-Modus:','Unten siehst du die <b>erwarteten Schiffe</b> — antippen zeigt Route &amp; Fracht. Die Zeichen an den Riffen: <b style="color:#E8708C">✕ offen</b> · <b style="color:#6FE7DC">◐ im Licht</b> · <b style="color:#EFC97F">◆ Boje sichert</b>.'],
-  ['Bau-Modus:','Shop unten. <b>Leuchtboje neben ein Riff</b> = dauerhaft sicher. Gebäude antippen → Ausbauen, <b>Verschieben</b>, Abreißen.'],
-  ['Die erste Nacht ist gnädig.','Behalte dein Öl im Blick — das Licht verbrennt es jede Nacht. Bereit? 🌙 unten links.'],
+  ['Willkommen, Wärter.','Ziehen = Karte bewegen, Kneifen = Zoomen. Unten rechts: <b>⚓ Plan</b> / <b>⚒ Bau</b>.'],
+  ['Öl ist dein Nacht-Budget (◔).','Der Strahl kostet fest, jede <b>scharfe</b> Boje 2 extra. Im Plan-Modus: <b>Boje antippen = an/aus.</b> Destillen erhöhen das Budget.'],
+  ['Jede Nacht würfelt die See neu.','Ebbe legt <b>Untiefen</b> frei, <b>Sandbänke</b> wandern nach Stürmen (keine Boje möglich!), die Strömung dreht. Lies die Vorhersage.'],
+  ['Die erste Nacht ist gnädig.','Bau ein Netz &amp; eine Destille, setz eine Boje ans nächste Riff. Dann: 🌙 unten links.'],
 ];
 function tutStep(){
   if(state.day>1||state.tut>=TUT.length)return;
   toast('<b>'+TUT[state.tut][0]+'</b>',TUT[state.tut][1]);state.tut++;save();
-  if(state.tut<TUT.length)setTimeout(tutStep,8000);
+  if(state.tut<TUT.length)setTimeout(tutStep,8500);
 }
 
 /* ═══════════ Buttons ═══════════ */
 $('tabPlan').onclick=()=>setDayMode('plan');
 $('tabBau').onclick=()=>setDayMode('bau');
-$('nightBtn').onclick=()=>{
-  if(phase!=='day')return;
-  const per=oilPerNight();
-  if(state.oil<per*.4&&!confirm('Dein Öl reicht kaum durch die Nacht. Trotzdem anbrechen lassen?'))return;
-  startNight();
-};
+$('nightBtn').onclick=()=>{if(phase==='day')startNight()};
 $('muteBtn').onclick=()=>{muted=!muted;$('muteBtn').textContent=muted?'∅':'♪'};
 $('helpBtn').onclick=()=>$('helpModal').classList.add('show');
 document.querySelectorAll('#nightHud [data-sp]').forEach(b=>b.onclick=()=>{
   night.speed=+b.dataset.sp;
   document.querySelectorAll('#nightHud [data-sp]').forEach(x=>x.classList.toggle('on',x===b));
 });
-$('startBtn').onclick=()=>{state=freshState();save();
+$('startBtn').onclick=()=>{freshState();save();
   $('title').classList.add('gone');setPhase('day');tutStep()};
 $('contBtn').onclick=()=>{$('title').classList.add('gone');setPhase('day')};
 
@@ -1446,8 +1627,7 @@ function loop(ts){
     const unterwegs=night.ships.filter(s=>s.alive&&!s.done&&night.t>=s.spawn).length;
     const kommend=night.ships.filter(s=>night.t<s.spawn).length;
     $('shipStat').innerHTML=`<b>${unterwegs}</b> auf See · <b>${night.saved.length}</b> geleitet · <b>${night.lost.length}</b> verloren${kommend?` · ${kommend} erwartet`:''}`;
-    $('oilHud').textContent='Öl '+fmt(state.oil)+(night.oilOut?' — dunkel!':'');
-    renderTop();
+    $('oilHud').textContent='◔ '+fmt(oilUsed())+'/'+fmt(oilCap());
   }
   drawWorld();
   requestAnimationFrame(loop);
@@ -1462,7 +1642,7 @@ function firstOk(type){
   return null;
 }
 function runSmoke(nNights){
-  state=freshState();
+  freshState();
   const d=firstOk('destille');if(d)state.structures.push({type:'destille',...d,lvl:1,damaged:false});
   const n2=firstOk('netz');if(n2)state.structures.push({type:'netz',...n2,lvl:1,damaged:false});
   for(const cl of reefClusters.slice(0,3)){
@@ -1470,14 +1650,17 @@ function runSmoke(nNights){
     for(const h of hexRange())if(placeOk('boje',1,h.q,h.r)){
       const p=h2w(h.q,h.r),dd=dist(p.x,p.y,cl.x,cl.y);
       if(dd<bd){bd=dd;best=h}}
-    if(best&&bd<2.4*hexW())state.structures.push({type:'boje',...best,lvl:1,damaged:false});
+    if(best&&bd<2.6*hexW())
+      state.structures.push({type:'boje',...best,lvl:1,damaged:false,
+        armed:oilUsed()+2<=oilCap()});
   }
   for(let i=0;i<nNights;i++){
     generateTonight();startNight();
     let guard=0;
     while(!night.done&&guard++<20000)stepNight(0.01);
   }
-  const out={nights:smokeLog,structures:state.structures.length,level:state.level,xp:state.xp};
+  const out={nights:smokeLog,structures:state.structures.length,level:state.level,
+    xp:state.xp,oilCap:oilCap(),oilUsed:oilUsed()};
   const el=$('smoke');el.style.display='block';el.textContent='SMOKE\n'+JSON.stringify(out,null,1);
   document.title='SMOKE_DONE';
 }
@@ -1490,9 +1673,9 @@ function boot(){
     requestAnimationFrame(loop);return}
   const shot=params.get('shot');
   if(shot){
-    state=saved||freshState();
+    if(saved)state=saved;else freshState();
     $('title').classList.add('gone');
-    if(shot==='night'){state.day=3;generateTonight();startNight();
+    if(shot==='night'){state.day=3;state.planCache=null;generateTonight();startNight();
       for(let i=0;i<800;i++)stepNight(0.005);cam={...camT}}
     else{setPhase('day');if(shot==='bau')setDayMode('bau');cam={...camT}}
     requestAnimationFrame(loop);return;
@@ -1502,7 +1685,7 @@ function boot(){
     $('contBtn').style.display='inline-block';
     $('contBtn').textContent=`Weiter (Nacht ${state.day})`;
     $('startBtn').textContent='Neu beginnen';
-  }else state=freshState();
+  }else freshState();
   requestAnimationFrame(loop);
 }
 boot();
